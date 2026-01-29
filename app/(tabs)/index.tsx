@@ -109,11 +109,13 @@ export default function HomeScreen() {
 
     // Callbacks
     const handleNotificationPress = useCallback(() => {
+        console.log('Navigating to notifications...');
         router.push('/notifications');
     }, []);
 
     const handleBookmarkPress = useCallback(() => {
-        console.log('Bookmark pressed');
+        console.log('Navigating to bookmarks...');
+        router.push('/bookmarks');
     }, []);
 
     const handleFilterPress = useCallback(() => {
