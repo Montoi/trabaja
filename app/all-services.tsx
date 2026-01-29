@@ -71,7 +71,7 @@ export default function AllServicesScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F9FA',
+        backgroundColor: Theme.colors.background,
     },
     header: {
         // Transparent to show container background
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 20,
         fontWeight: '700',
-        color: '#000',
+        color: Theme.colors.textPrimary,
         marginLeft: 8,
     },
     moreButton: {
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
         height: 40,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: '#E2E8F0',
+        borderColor: Theme.colors.border,
         justifyContent: 'center',
         alignItems: 'center',
     },

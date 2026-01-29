@@ -59,12 +59,12 @@ export default function PopularServicesScreen() {
                 <View style={styles.headerContent}>
                     <View style={styles.headerLeft}>
                         <Pressable onPress={() => router.back()} style={styles.backButton}>
-                            <Ionicons name="arrow-back" size={24} color="#000" />
+                            <Ionicons name="arrow-back" size={24} color={Theme.colors.textPrimary} />
                         </Pressable>
                         <Text style={styles.headerTitle}>{headerTitle}</Text>
                     </View>
                     <Pressable style={styles.moreButton}>
-                        <Ionicons name="ellipsis-horizontal" size={20} color="#000" />
+                        <Ionicons name="ellipsis-horizontal" size={20} color={Theme.colors.textPrimary} />
                     </Pressable>
                 </View>
             </View>
@@ -90,7 +90,7 @@ export default function PopularServicesScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F9FA',
+        backgroundColor: Theme.colors.background,
     },
     header: {
         // Transparent to show container background
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 20,
         fontWeight: '700',
-        color: '#000',
+        color: Theme.colors.textPrimary,
         marginLeft: 8,
     },
     moreButton: {
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
         height: 40,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: '#E2E8F0',
+        borderColor: Theme.colors.border,
         justifyContent: 'center',
         alignItems: 'center',
     },

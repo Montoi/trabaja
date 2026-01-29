@@ -156,7 +156,7 @@ export default function HomeScreen() {
                         onSeeAllPress={handleSeeAllServices}
                     />
                     <View style={styles.servicesGrid}>
-                        {SERVICES.map((service) => (
+                        {SERVICES.slice(0, 7).map((service) => (
                             <View key={service.id} style={{ width: ITEM_WIDTH }}>
                                 <ServiceIcon
                                     service={service}
@@ -164,6 +164,13 @@ export default function HomeScreen() {
                                 />
                             </View>
                         ))}
+                        {/* More Button */}
+                        <View style={{ width: ITEM_WIDTH }}>
+                            <ServiceIcon
+                                service={SERVICES[SERVICES.length - 1]} // The "More" service from MockData
+                                onPress={handleSeeAllServices}
+                            />
+                        </View>
                     </View>
                 </View>
 
@@ -174,7 +181,7 @@ export default function HomeScreen() {
                         onSeeAllPress={handleSeeAllPopular}
                     />
                     <View style={styles.popularList}>
-                        {POPULAR_SERVICES.map((service) => (
+                        {POPULAR_SERVICES.slice(0, 5).map((service) => (
                             <PopularServiceCard
                                 key={service.id}
                                 service={service}

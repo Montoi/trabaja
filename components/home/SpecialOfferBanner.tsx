@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { Image } from 'expo-image';
 import { memo } from 'react';
 import type { SpecialOffer } from '../../types/home';
 
@@ -22,14 +21,6 @@ export const SpecialOfferBanner = memo(function SpecialOfferBanner({
                 <Text style={styles.discount}>{offer.discount}</Text>
                 <Text style={styles.title}>{offer.title}</Text>
                 <Text style={styles.description}>{offer.description}</Text>
-            </View>
-            <View style={styles.imageContainer}>
-                <View style={styles.imageGlow} />
-                <Image
-                    source={typeof offer.image === 'string' ? { uri: offer.image } : offer.image}
-                    style={styles.image}
-                    contentFit="contain"
-                />
             </View>
             {totalItems > 1 && (
                 <View style={styles.pagination}>
@@ -60,7 +51,7 @@ const styles = StyleSheet.create({
     },
     content: {
         zIndex: 10,
-        width: '70%',
+        width: '100%',
         justifyContent: 'center',
     },
     discount: {
@@ -80,33 +71,6 @@ const styles = StyleSheet.create({
         color: '#FFF',
         opacity: 0.9,
         lineHeight: 16,
-    },
-    imageContainer: {
-        position: 'absolute',
-        right: 0,
-        bottom: 0,
-        height: '100%',
-        width: '50%',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        overflow: 'visible',
-    },
-    imageGlow: {
-        position: 'absolute',
-        width: '120%',
-        height: '100%',
-        backgroundColor: 'rgba(255, 255, 255, 0.15)',
-        borderTopLeftRadius: 100,
-        bottom: -20,
-        right: -20,
-        transform: [{ rotate: '-15deg' }],
-    },
-    image: {
-        position: 'absolute',
-        bottom: -5,
-        right: -10,
-        height: '95%',
-        width: '110%',
     },
     pagination: {
         position: 'absolute',
