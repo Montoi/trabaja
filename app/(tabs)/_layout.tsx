@@ -9,7 +9,6 @@ export default function TabLayout() {
         <Tabs
             screenOptions={{
                 headerShown: false,
-                tabBarStyle: styles.tabBarStyle,
             }}
             tabBar={(props) => <CustomTabBar {...props} />}
         >
@@ -70,7 +69,7 @@ const TabItem = memo(function TabItem({
             testID={testID}
             onPress={onPress}
             onLongPress={onLongPress}
-            style={getPressableStyle}
+            style={styles.tabButton}
         >
             <View style={[styles.tabItem, isFocused && styles.tabItemFocused]}>
                 {icon && (
@@ -87,11 +86,6 @@ const TabItem = memo(function TabItem({
         </Pressable>
     );
 });
-
-// Stable style function reference (hoisted outside component)
-function getPressableStyle({ pressed }: { pressed: boolean }) {
-    return [styles.tabButton, pressed && styles.tabButtonPressed];
-}
 
 function CustomTabBar({ state, descriptors, navigation }: any) {
     // Get safe area insets to prevent tab bar from being covered by system UI
@@ -157,14 +151,6 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-    tabBarStyle: {
-        backgroundColor: '#fff',
-        borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
-        height: 60,
-        paddingBottom: 8,
-        paddingTop: 8,
-    },
     tabBar: {
         flexDirection: 'row',
         backgroundColor: '#fff',
@@ -176,9 +162,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    tabButtonPressed: {
-        opacity: 0.7,
     },
     tabItem: {
         alignItems: 'center',

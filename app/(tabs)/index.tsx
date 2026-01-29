@@ -22,14 +22,48 @@ export default function HomeScreen() {
         greeting: 'Good Morning',
     };
 
-    const specialOffer: SpecialOffer = {
-        id: '1',
-        discount: '30%',
-        title: "Today's Special!",
-        description: 'Get discount for every order, only valid for today',
-        image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400',
-        bgColor: '#7210FF',
-    };
+    const specialOffers: SpecialOffer[] = [
+        {
+            id: '1',
+            discount: '50%',
+            title: 'Emergency Services!',
+            description: 'Professional firefighters ready 24/7 for your safety',
+            image: require('../../assets/Bombera.png'),
+            bgColor: '#FF3B30',
+        },
+        {
+            id: '2',
+            discount: '40%',
+            title: 'Tech Experts!',
+            description: 'Certified technicians for all your repair needs',
+            image: require('../../assets/Tecnico.png'),
+            bgColor: '#007AFF',
+        },
+        {
+            id: '3',
+            discount: '30%',
+            title: 'Deep Cleaning!',
+            description: 'Professional cleaning service for your home or office',
+            image: require('../../assets/Limpieza.png'),
+            bgColor: '#7210FF',
+        },
+        {
+            id: '4',
+            discount: '35%',
+            title: 'Health Care!',
+            description: 'Licensed nurses for home healthcare services',
+            image: require('../../assets/Enfermero.png'),
+            bgColor: '#34C759',
+        },
+        {
+            id: '5',
+            discount: '45%',
+            title: 'Construction!',
+            description: 'Expert builders for all your construction projects',
+            image: require('../../assets/Constructor.png'),
+            bgColor: '#FF9500',
+        },
+    ];
 
     const services: Service[] = [
         { id: '1', name: 'Cleaning', icon: 'water-outline', bgColor: '#F3E8FF', iconColor: '#7210FF' },
@@ -136,7 +170,23 @@ export default function HomeScreen() {
                         title="Special Offers"
                         onSeeAllPress={handleSeeAllOffers}
                     />
-                    <SpecialOfferBanner offer={specialOffer} currentIndex={0} totalItems={4} />
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        pagingEnabled
+                        snapToInterval={340}
+                        decelerationRate="fast"
+                        contentContainerStyle={styles.bannerScroll}
+                    >
+                        {specialOffers.map((offer, index) => (
+                            <SpecialOfferBanner
+                                key={offer.id}
+                                offer={offer}
+                                currentIndex={index}
+                                totalItems={specialOffers.length}
+                            />
+                        ))}
+                    </ScrollView>
                 </View>
 
                 {/* Services Grid */}
@@ -196,6 +246,10 @@ const styles = StyleSheet.create({
     },
     section: {
         marginBottom: 32,
+    },
+    bannerScroll: {
+        paddingRight: 24,
+        gap: 16,
     },
     servicesGrid: {
         flexDirection: 'row',

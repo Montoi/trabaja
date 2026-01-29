@@ -24,7 +24,7 @@ export const SpecialOfferBanner = memo(function SpecialOfferBanner({
             <View style={styles.imageContainer}>
                 <View style={styles.imageGlow} />
                 <Image
-                    source={{ uri: offer.image }}
+                    source={typeof offer.image === 'string' ? { uri: offer.image } : offer.image}
                     style={styles.image}
                     contentFit="contain"
                 />
@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
         borderRadius: 32,
         padding: 24,
         height: 176,
+        width: 340,
         position: 'relative',
         overflow: 'hidden',
         flexDirection: 'row',

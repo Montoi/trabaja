@@ -11,7 +11,7 @@ export interface SpecialOffer {
     discount: string;
     title: string;
     description: string;
-    image: string;
+    image: string | number; // URL string or local require() number
     bgColor: string;
 }
 
