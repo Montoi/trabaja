@@ -2,14 +2,14 @@ import { View, ScrollView, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useState, useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SectionHeader, SearchBar } from '../components/common';
+import { SectionHeader, SearchBar } from '../../components/common';
 import {
     ProfileHeader,
     SpecialOfferBanner,
     ServiceIcon,
     PopularServiceCard,
-} from '../components/home';
-import type { User, SpecialOffer, Service, PopularService } from '../types/home';
+} from '../../components/home';
+import type { User, SpecialOffer, Service, PopularService } from '../../types/home';
 
 export default function HomeScreen() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -144,7 +144,7 @@ export default function HomeScreen() {
                 style={styles.scrollView}
                 contentContainerStyle={[
                     styles.scrollContent,
-                    { paddingTop: insets.top }
+                    { paddingTop: insets.top, paddingBottom: 120 }
                 ]}
             >
                 {/* Profile Header */}

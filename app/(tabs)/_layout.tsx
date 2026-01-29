@@ -1,14 +1,22 @@
 import { Tabs } from 'expo-router';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { memo, useCallback } from 'react';
+import { View, Text, StyleSheet, Pressable, Platform, Dimensions } from 'react-native';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    withSpring,
+    interpolateColor,
+    useAnimatedProps
+} from 'react-native-reanimated';
 
 export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
                 headerShown: false,
+                tabBarStyle: { position: 'absolute' },
             }}
             tabBar={(props) => <CustomTabBar {...props} />}
         >
@@ -70,13 +78,14 @@ const TabItem = memo(function TabItem({
             onPress={onPress}
             onLongPress={onLongPress}
             style={styles.tabButton}
+            android_ripple={{ color: 'rgba(114, 16, 255, 0.1)', borderless: true }}
         >
-            <View style={[styles.tabItem, isFocused && styles.tabItemFocused]}>
+            <View style={styles.tabItem}>
                 {icon && (
                     <Ionicons
                         name={icon as any}
-                        size={24}
-                        color={isFocused ? '#7210FF' : '#999'}
+                        size={20}
+                        color={isFocused ? '#FFFFFF' : '#999'}
                     />
                 )}
                 <Text style={[styles.tabLabel, isFocused && styles.tabLabelFocused]}>
@@ -124,63 +133,126 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
         profile: 'person',
     };
 
-    return (
-        <View style={[styles.tabBar, { paddingBottom: insets.bottom + 4 }]}>
-            {state.routes.map((route: any, index: number) => {
-                const { options } = descriptors[route.key];
-                const label = options.title || route.name;
-                const isFocused = state.index === index;
+    // Standardize floating position to be 100% stable
+    // We use the safe area bottom inset plus a fixed gap
+    const bottomPosition = (insets.bottom || 12) + 12;
 
-                return (
-                    <TabItem
-                        key={route.key}
-                        route={route}
-                        index={index}
-                        isFocused={isFocused}
-                        label={label}
-                        icon={iconMap[route.name]}
-                        accessibilityLabel={options.tabBarAccessibilityLabel}
-                        testID={options.tabBarTestID}
-                        onPress={createTabPressHandler(route.name, route.key, isFocused)}
-                        onLongPress={createTabLongPressHandler(route.key)}
-                    />
-                );
-            })}
+    // Animation logic
+    const totalWidth = Dimensions.get('window').width - 60; // 60 = marginHorizontal 30 * 2
+    const tabWidth = totalWidth / state.routes.length;
+    const pillPadding = 8;
+    const pillWidth = tabWidth - (pillPadding * 2);
+    const translateX = useSharedValue(state.index * tabWidth + pillPadding);
+
+    useEffect(() => {
+        translateX.value = withSpring(state.index * tabWidth + pillPadding, {
+            damping: 20,
+            stiffness: 150,
+            mass: 0.8,
+        });
+    }, [state.index, tabWidth, translateX]);
+
+    const animatedPillStyle = useAnimatedStyle(() => ({
+        transform: [{ translateX: translateX.value }],
+    }));
+
+    return (
+        <View style={[styles.tabBar, { bottom: bottomPosition }]}>
+            {/* Animated Pill Background - Rendered first to stay behind */}
+            <Animated.View
+                style={[
+                    styles.animatedPill,
+                    { width: pillWidth },
+                    animatedPillStyle
+                ]}
+            />
+
+            <View style={styles.buttonsContainer}>
+                {state.routes.map((route: any, index: number) => {
+                    const { options } = descriptors[route.key];
+                    const label = options.title || route.name;
+                    const isFocused = state.index === index;
+
+                    return (
+                        <TabItem
+                            key={route.key}
+                            route={route}
+                            index={index}
+                            isFocused={isFocused}
+                            label={label}
+                            icon={iconMap[route.name]}
+                            accessibilityLabel={options.tabBarAccessibilityLabel}
+                            testID={options.tabBarTestID}
+                            onPress={createTabPressHandler(route.name, route.key, isFocused)}
+                            onLongPress={createTabLongPressHandler(route.key)}
+                        />
+                    );
+                })}
+            </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     tabBar: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
         flexDirection: 'row',
-        backgroundColor: '#fff',
-        borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
-        paddingTop: 8,
+        backgroundColor: '#FFFFFF',
+        borderTopWidth: 0,
+        marginHorizontal: 30,
+        borderRadius: 30,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 6,
+        height: 48,
+        overflow: 'hidden',
+    },
+    buttonsContainer: {
+        flexDirection: 'row',
+        flex: 1,
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     tabButton: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        height: '100%',
     },
     tabItem: {
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 6,
-        paddingHorizontal: 12,
-        borderRadius: 8,
-        gap: 4,
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        borderRadius: 20,
+        gap: 1,
+        width: 64,
+        zIndex: 2,
+    },
+    animatedPill: {
+        position: 'absolute',
+        top: 4,
+        bottom: 4,
+        left: 0,
+        backgroundColor: '#7210FF',
+        borderRadius: 20,
+        zIndex: 0,
     },
     tabItemFocused: {
-        backgroundColor: '#f0f0f0',
+        // Background handled by animatedPill
     },
     tabLabel: {
-        fontSize: 10,
-        color: '#666',
-        fontWeight: '500',
+        fontSize: 7.5,
+        color: '#9E9E9E',
+        fontWeight: '600',
     },
     tabLabelFocused: {
-        color: '#007AFF',
-        fontWeight: '600',
+        color: '#FFFFFF',
+        fontWeight: '700',
     },
 });

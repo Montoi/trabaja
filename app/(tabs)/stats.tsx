@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -6,11 +6,18 @@ export default function StatsScreen() {
     const insets = useSafeAreaInsets();
 
     return (
-        <View style={[styles.container, { paddingTop: insets.top }]}>
-            <Text style={styles.title}>Estadísticas</Text>
-            <Text style={styles.subtitle}>
-                Aquí podrás ver tus estadísticas y métricas
-            </Text>
+        <View style={styles.container}>
+            <ScrollView
+                contentContainerStyle={[
+                    styles.scrollContent,
+                    { paddingTop: insets.top + 20, paddingBottom: 120 }
+                ]}
+            >
+                <Text style={styles.title}>Estadísticas</Text>
+                <Text style={styles.subtitle}>
+                    Aquí podrás ver tus estadísticas y métricas
+                </Text>
+            </ScrollView>
             <StatusBar style="auto" />
         </View>
     );
@@ -20,6 +27,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+    },
+    scrollContent: {
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
