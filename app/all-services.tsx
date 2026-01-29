@@ -109,7 +109,13 @@ export default function AllServicesScreen() {
     const insets = useSafeAreaInsets();
 
     const handleServicePress = (id: string) => {
-        console.log('Service pressed:', id);
+        const service = ALL_SERVICES.find(s => s.id === id);
+        if (service) {
+            router.push({
+                pathname: '/popular-services',
+                params: { category: service.name }
+            });
+        }
     };
 
     return (

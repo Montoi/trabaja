@@ -127,7 +127,7 @@ export default function HomeScreen() {
     }, []);
 
     const handleSeeAllOffers = useCallback(() => {
-        console.log('See all offers');
+        router.push('/special-offers');
     }, []);
 
     const handleSeeAllServices = useCallback(() => {
@@ -135,16 +135,22 @@ export default function HomeScreen() {
     }, []);
 
     const handleSeeAllPopular = useCallback(() => {
-        console.log('See all popular services');
+        router.push('/popular-services');
     }, []);
 
     const handleServicePress = useCallback((id: string) => {
         if (id === '8') {
             router.push('/all-services');
         } else {
-            console.log('Service pressed:', id);
+            const service = services.find(s => s.id === id);
+            if (service) {
+                router.push({
+                    pathname: '/popular-services',
+                    params: { category: service.name }
+                });
+            }
         }
-    }, []);
+    }, [services]);
 
     const handlePopularServicePress = useCallback((id: string) => {
         console.log('Popular service pressed:', id);
