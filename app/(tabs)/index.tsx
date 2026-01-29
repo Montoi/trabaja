@@ -22,6 +22,10 @@ const BANNER_WIDTH = SCREEN_WIDTH - 48; // SCREEN_WIDTH - (paddingHorizontal * 2
 const BANNER_GAP = 16;
 const SNAP_INTERVAL = BANNER_WIDTH + BANNER_GAP;
 
+const GRID_PADDING = 24;
+const COLUMN_GAP = 16;
+const ITEM_WIDTH = (SCREEN_WIDTH - (GRID_PADDING * 2) - (COLUMN_GAP * 3)) / 4;
+
 export default function HomeScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const insets = useSafeAreaInsets();
@@ -72,14 +76,14 @@ export default function HomeScreen() {
     ];
 
     const services: Service[] = [
-        { id: '1', name: 'Cleaning', icon: 'water-outline', bgColor: '#F3E8FF', iconColor: '#7210FF' },
-        { id: '2', name: 'Repairing', icon: 'construct-outline', bgColor: '#FFF4E6', iconColor: '#FF9800' },
-        { id: '3', name: 'Painting', icon: 'color-palette-outline', bgColor: '#E3F2FD', iconColor: '#2196F3' },
-        { id: '4', name: 'Laundry', icon: 'shirt-outline', bgColor: '#FFF9C4', iconColor: '#FFC107' },
-        { id: '5', name: 'Appliance', icon: 'tv-outline', bgColor: '#FFEBEE', iconColor: '#F44336' },
-        { id: '6', name: 'Plumbing', icon: 'water', bgColor: '#E8F5E9', iconColor: '#4CAF50' },
-        { id: '7', name: 'Shifting', icon: 'car-outline', bgColor: '#E0F2F1', iconColor: '#009688' },
-        { id: '8', name: 'More', icon: 'ellipsis-horizontal', bgColor: '#F3E8FF', iconColor: '#7210FF' },
+        { id: '1', name: 'Cleaning', icon: 'brush-outline', bgColor: '#EDE9FE', iconColor: '#7C3AED' },
+        { id: '2', name: 'Repairing', icon: 'build-outline', bgColor: '#FFEDD5', iconColor: '#EA580C' },
+        { id: '3', name: 'Painting', icon: 'color-fill-outline', bgColor: '#DBEAFE', iconColor: '#2563EB' },
+        { id: '4', name: 'Laundry', icon: 'water-outline', bgColor: '#FEF9C3', iconColor: '#CA8A04' },
+        { id: '5', name: 'Appliance', icon: 'refrigerator-outline', bgColor: '#FEE2E2', iconColor: '#DC2626' },
+        { id: '6', name: 'Plumbing', icon: 'construct-outline', bgColor: '#D1FAE5', iconColor: '#059669' },
+        { id: '7', name: 'Shifting', icon: 'bus-outline', bgColor: '#CFFAFE', iconColor: '#0891B2' },
+        { id: '8', name: 'More', icon: 'ellipsis-horizontal', bgColor: '#F5F3FF', iconColor: '#7210FF' },
     ];
 
     const popularServices: PopularService[] = [
@@ -127,7 +131,7 @@ export default function HomeScreen() {
     }, []);
 
     const handleSeeAllServices = useCallback(() => {
-        console.log('See all services');
+        router.push('/all-services');
     }, []);
 
     const handleSeeAllPopular = useCallback(() => {
@@ -135,7 +139,11 @@ export default function HomeScreen() {
     }, []);
 
     const handleServicePress = useCallback((id: string) => {
-        console.log('Service pressed:', id);
+        if (id === '8') {
+            router.push('/all-services');
+        } else {
+            console.log('Service pressed:', id);
+        }
     }, []);
 
     const handlePopularServicePress = useCallback((id: string) => {
@@ -210,11 +218,12 @@ export default function HomeScreen() {
                     />
                     <View style={styles.servicesGrid}>
                         {services.map((service) => (
-                            <ServiceIcon
-                                key={service.id}
-                                service={service}
-                                onPress={handleServicePress}
-                            />
+                            <View key={service.id} style={{ width: ITEM_WIDTH }}>
+                                <ServiceIcon
+                                    service={service}
+                                    onPress={handleServicePress}
+                                />
+                            </View>
                         ))}
                     </View>
                 </View>
@@ -269,8 +278,8 @@ const styles = StyleSheet.create({
     servicesGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 16,
-        justifyContent: 'space-between',
+        gap: COLUMN_GAP,
+        rowGap: 24,
     },
     popularList: {
         gap: 16,

@@ -24,7 +24,6 @@ export const ServiceIcon = memo(function ServiceIcon({ service, onPress }: Servi
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        width: 80,
     },
     iconContainer: {
         width: 56,
