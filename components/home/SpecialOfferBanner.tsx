@@ -5,17 +5,19 @@ import type { SpecialOffer } from '../../types/home';
 
 interface SpecialOfferBannerProps {
     offer: SpecialOffer;
+    width: number;
     currentIndex?: number;
     totalItems?: number;
 }
 
 export const SpecialOfferBanner = memo(function SpecialOfferBanner({
     offer,
+    width,
     currentIndex = 0,
     totalItems = 1,
 }: SpecialOfferBannerProps) {
     return (
-        <View style={[styles.container, { backgroundColor: offer.bgColor }]}>
+        <View style={[styles.container, { backgroundColor: offer.bgColor, width }]}>
             <View style={styles.content}>
                 <Text style={styles.discount}>{offer.discount}</Text>
                 <Text style={styles.title}>{offer.title}</Text>
@@ -51,7 +53,6 @@ const styles = StyleSheet.create({
         borderRadius: 32,
         padding: 24,
         height: 176,
-        width: 340,
         position: 'relative',
         overflow: 'hidden',
         flexDirection: 'row',
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     },
     content: {
         zIndex: 10,
-        width: '60%',
+        width: '70%',
         justifyContent: 'center',
     },
     discount: {
@@ -88,21 +89,24 @@ const styles = StyleSheet.create({
         width: '50%',
         alignItems: 'center',
         justifyContent: 'flex-end',
+        overflow: 'visible',
     },
     imageGlow: {
         position: 'absolute',
-        width: '100%',
-        height: '80%',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        borderTopLeftRadius: 9999,
-        bottom: 0,
+        width: '120%',
+        height: '100%',
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+        borderTopLeftRadius: 100,
+        bottom: -20,
+        right: -20,
+        transform: [{ rotate: '-15deg' }],
     },
     image: {
         position: 'absolute',
-        bottom: 0,
-        right: 8,
-        height: '80%',
-        width: '100%',
+        bottom: -5,
+        right: -10,
+        height: '95%',
+        width: '110%',
     },
     pagination: {
         position: 'absolute',

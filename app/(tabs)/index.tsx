@@ -1,4 +1,9 @@
-import { View, ScrollView, StyleSheet } from 'react-native';
+import {
+    View,
+    ScrollView,
+    StyleSheet,
+    Dimensions,
+} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useState, useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,6 +15,11 @@ import {
     PopularServiceCard,
 } from '../../components/home';
 import type { User, SpecialOffer, Service, PopularService } from '../../types/home';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const BANNER_WIDTH = SCREEN_WIDTH - 48; // SCREEN_WIDTH - (paddingHorizontal * 2)
+const BANNER_GAP = 16;
+const SNAP_INTERVAL = BANNER_WIDTH + BANNER_GAP;
 
 export default function HomeScreen() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -28,7 +38,6 @@ export default function HomeScreen() {
             discount: '50%',
             title: 'Emergency Services!',
             description: 'Professional firefighters ready 24/7 for your safety',
-            image: require('../../assets/Bombera.png'),
             bgColor: '#FF3B30',
         },
         {
@@ -36,7 +45,6 @@ export default function HomeScreen() {
             discount: '40%',
             title: 'Tech Experts!',
             description: 'Certified technicians for all your repair needs',
-            image: require('../../assets/Tecnico.png'),
             bgColor: '#007AFF',
         },
         {
@@ -44,7 +52,6 @@ export default function HomeScreen() {
             discount: '30%',
             title: 'Deep Cleaning!',
             description: 'Professional cleaning service for your home or office',
-            image: require('../../assets/Limpieza.png'),
             bgColor: '#7210FF',
         },
         {
@@ -52,7 +59,6 @@ export default function HomeScreen() {
             discount: '35%',
             title: 'Health Care!',
             description: 'Licensed nurses for home healthcare services',
-            image: require('../../assets/Enfermero.png'),
             bgColor: '#34C759',
         },
         {
@@ -60,7 +66,6 @@ export default function HomeScreen() {
             discount: '45%',
             title: 'Construction!',
             description: 'Expert builders for all your construction projects',
-            image: require('../../assets/Constructor.png'),
             bgColor: '#FF9500',
         },
     ];
@@ -175,15 +180,18 @@ export default function HomeScreen() {
                     <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
-                        pagingEnabled
-                        snapToInterval={340}
+                        pagingEnabled={false}
+                        snapToInterval={SNAP_INTERVAL}
+                        snapToAlignment="start"
                         decelerationRate="fast"
+                        disableIntervalMomentum={true}
                         contentContainerStyle={styles.bannerScroll}
                     >
                         {specialOffers.map((offer, index) => (
                             <SpecialOfferBanner
                                 key={offer.id}
                                 offer={offer}
+                                width={BANNER_WIDTH}
                                 currentIndex={index}
                                 totalItems={specialOffers.length}
                             />
@@ -236,6 +244,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#FFF',
     },
+    topGuard: {
+        backgroundColor: '#FFF',
+    },
     scrollView: {
         flex: 1,
     },
@@ -250,7 +261,6 @@ const styles = StyleSheet.create({
         marginBottom: 32,
     },
     bannerScroll: {
-        paddingRight: 24,
         gap: 16,
     },
     servicesGrid: {
