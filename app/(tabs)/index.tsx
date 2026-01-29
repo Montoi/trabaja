@@ -7,6 +7,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { useState, useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { SectionHeader, SearchBar } from '../../components/common';
 import {
     ProfileHeader,
@@ -108,7 +109,7 @@ export default function HomeScreen() {
 
     // Callbacks
     const handleNotificationPress = useCallback(() => {
-        console.log('Notification pressed');
+        router.push('/notifications');
     }, []);
 
     const handleBookmarkPress = useCallback(() => {
