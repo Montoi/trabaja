@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, SectionList, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 
 interface NotificationItem {
     id: string;
@@ -100,6 +100,14 @@ const NotificationCard = memo(({ item }: { item: NotificationItem }) => (
 export default function NotificationsScreen() {
     const insets = useSafeAreaInsets();
 
+    const renderItem = useCallback(({ item }: { item: NotificationItem }) => (
+        <NotificationCard item={item} />
+    ), []);
+
+    const renderSectionHeader = useCallback(({ section: { title } }: { section: { title: string } }) => (
+        <Text style={styles.sectionHeader}>{title}</Text>
+    ), []);
+
     return (
         <View style={styles.container}>
             <StatusBar style="dark" />
@@ -118,20 +126,16 @@ export default function NotificationsScreen() {
                 </View>
             </View>
 
-            <ScrollView
+            <SectionList
+                sections={NOTIFICATIONS}
+                keyExtractor={(item) => item.id}
+                renderItem={renderItem}
+                renderSectionHeader={renderSectionHeader}
+                stickySectionHeadersEnabled={false}
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
-            >
-                {NOTIFICATIONS.map((section) => (
-                    <View key={section.title} style={styles.section}>
-                        <Text style={styles.sectionHeader}>{section.title}</Text>
-                        {section.data.map((item) => (
-                            <NotificationCard key={item.id} item={item} />
-                        ))}
-                    </View>
-                ))}
-            </ScrollView>
+            />
         </View>
     );
 }

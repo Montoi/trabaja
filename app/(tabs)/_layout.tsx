@@ -81,7 +81,7 @@ const TabItem = memo(function TabItem({
             android_ripple={{ color: 'rgba(114, 16, 255, 0.1)', borderless: true }}
         >
             <View style={styles.tabItem}>
-                {icon && (
+                {!!icon && (
                     <Ionicons
                         name={icon as any}
                         size={20}

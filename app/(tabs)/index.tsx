@@ -26,90 +26,95 @@ const GRID_PADDING = 24;
 const COLUMN_GAP = 16;
 const ITEM_WIDTH = (SCREEN_WIDTH - (GRID_PADDING * 2) - (COLUMN_GAP * 3)) / 4;
 
+// Mock data
+const USER_DATA: User = {
+    name: 'Andrew Ainsley',
+    avatar: 'https://i.pravatar.cc/150?img=12',
+    greeting: 'Good Morning',
+};
+
+const SPECIAL_OFFERS: SpecialOffer[] = [
+    {
+        id: '1',
+        discount: '50%',
+        title: 'Emergency Services!',
+        description: 'Professional firefighters ready 24/7 for your safety',
+        bgColor: '#FF3B30',
+        image: 'https://images.unsplash.com/photo-1510515134701-443372c0cc95?w=400&q=80',
+    },
+    {
+        id: '2',
+        discount: '40%',
+        title: 'Tech Experts!',
+        description: 'Certified technicians for all your repair needs',
+        bgColor: '#007AFF',
+        image: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&q=80',
+    },
+    {
+        id: '3',
+        discount: '30%',
+        title: 'Deep Cleaning!',
+        description: 'Professional cleaning service for your home or office',
+        bgColor: '#7210FF',
+        image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&q=80',
+    },
+    {
+        id: '4',
+        discount: '35%',
+        title: 'Health Care!',
+        description: 'Licensed nurses for home healthcare services',
+        bgColor: '#34C759',
+        image: 'https://images.unsplash.com/photo-1576091160550-217359f4ecf8?w=400&q=80',
+    },
+    {
+        id: '5',
+        discount: '45%',
+        title: 'Construction!',
+        description: 'Expert builders for all your construction projects',
+        bgColor: '#FF9500',
+        image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&q=80',
+    },
+];
+
+const SERVICES: Service[] = [
+    { id: '1', name: 'Cleaning', icon: 'brush-outline', bgColor: '#EDE9FE', iconColor: '#7C3AED' },
+    { id: '2', name: 'Repairing', icon: 'build-outline', bgColor: '#FFEDD5', iconColor: '#EA580C' },
+    { id: '3', name: 'Painting', icon: 'color-fill-outline', bgColor: '#DBEAFE', iconColor: '#2563EB' },
+    { id: '4', name: 'Laundry', icon: 'water-outline', bgColor: '#FEF9C3', iconColor: '#CA8A04' },
+    { id: '5', name: 'Appliance', icon: 'tv-outline', bgColor: '#FEE2E2', iconColor: '#DC2626' },
+    { id: '6', name: 'Plumbing', icon: 'construct-outline', bgColor: '#D1FAE5', iconColor: '#059669' },
+    { id: '7', name: 'Shifting', icon: 'bus-outline', bgColor: '#CFFAFE', iconColor: '#0891B2' },
+    { id: '8', name: 'More', icon: 'ellipsis-horizontal', bgColor: '#F5F3FF', iconColor: '#7210FF' },
+];
+
+const POPULAR_SERVICES: PopularService[] = [
+    {
+        id: '1',
+        title: 'Full House Cleaning',
+        category: 'House Cleaning',
+        provider: 'Kylee Danford',
+        price: 25,
+        rating: 4.8,
+        reviewCount: 8289,
+        image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400',
+        isBookmarked: false,
+    },
+    {
+        id: '2',
+        title: 'AC Repair & Service',
+        category: 'Repairing',
+        provider: 'Sarah Johnson',
+        price: 45,
+        rating: 4.9,
+        reviewCount: 5120,
+        image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400',
+        isBookmarked: true,
+    },
+];
+
 export default function HomeScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const insets = useSafeAreaInsets();
-
-    // Mock data
-    const user: User = {
-        name: 'Andrew Ainsley',
-        avatar: 'https://i.pravatar.cc/150?img=12',
-        greeting: 'Good Morning',
-    };
-
-    const specialOffers: SpecialOffer[] = [
-        {
-            id: '1',
-            discount: '50%',
-            title: 'Emergency Services!',
-            description: 'Professional firefighters ready 24/7 for your safety',
-            bgColor: '#FF3B30',
-        },
-        {
-            id: '2',
-            discount: '40%',
-            title: 'Tech Experts!',
-            description: 'Certified technicians for all your repair needs',
-            bgColor: '#007AFF',
-        },
-        {
-            id: '3',
-            discount: '30%',
-            title: 'Deep Cleaning!',
-            description: 'Professional cleaning service for your home or office',
-            bgColor: '#7210FF',
-        },
-        {
-            id: '4',
-            discount: '35%',
-            title: 'Health Care!',
-            description: 'Licensed nurses for home healthcare services',
-            bgColor: '#34C759',
-        },
-        {
-            id: '5',
-            discount: '45%',
-            title: 'Construction!',
-            description: 'Expert builders for all your construction projects',
-            bgColor: '#FF9500',
-        },
-    ];
-
-    const services: Service[] = [
-        { id: '1', name: 'Cleaning', icon: 'brush-outline', bgColor: '#EDE9FE', iconColor: '#7C3AED' },
-        { id: '2', name: 'Repairing', icon: 'build-outline', bgColor: '#FFEDD5', iconColor: '#EA580C' },
-        { id: '3', name: 'Painting', icon: 'color-fill-outline', bgColor: '#DBEAFE', iconColor: '#2563EB' },
-        { id: '4', name: 'Laundry', icon: 'water-outline', bgColor: '#FEF9C3', iconColor: '#CA8A04' },
-        { id: '5', name: 'Appliance', icon: 'refrigerator-outline', bgColor: '#FEE2E2', iconColor: '#DC2626' },
-        { id: '6', name: 'Plumbing', icon: 'construct-outline', bgColor: '#D1FAE5', iconColor: '#059669' },
-        { id: '7', name: 'Shifting', icon: 'bus-outline', bgColor: '#CFFAFE', iconColor: '#0891B2' },
-        { id: '8', name: 'More', icon: 'ellipsis-horizontal', bgColor: '#F5F3FF', iconColor: '#7210FF' },
-    ];
-
-    const popularServices: PopularService[] = [
-        {
-            id: '1',
-            title: 'Full House Cleaning',
-            category: 'House Cleaning',
-            provider: 'Kylee Danford',
-            price: 25,
-            rating: 4.8,
-            reviewCount: 8289,
-            image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400',
-            isBookmarked: false,
-        },
-        {
-            id: '2',
-            title: 'AC Repair & Service',
-            category: 'Repairing',
-            provider: 'Sarah Johnson',
-            price: 45,
-            rating: 4.9,
-            reviewCount: 5120,
-            image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400',
-            isBookmarked: true,
-        },
-    ];
 
     // Callbacks
     const handleNotificationPress = useCallback(() => {
@@ -142,7 +147,7 @@ export default function HomeScreen() {
         if (id === '8') {
             router.push('/all-services');
         } else {
-            const service = services.find(s => s.id === id);
+            const service = SERVICES.find(s => s.id === id);
             if (service) {
                 router.push({
                     pathname: '/popular-services',
@@ -150,10 +155,20 @@ export default function HomeScreen() {
                 });
             }
         }
-    }, [services]);
+    }, []);
 
     const handlePopularServicePress = useCallback((id: string) => {
-        console.log('Popular service pressed:', id);
+        const service = POPULAR_SERVICES.find(s => s.id === id);
+        if (service) {
+            router.push({
+                pathname: `/service-detail/${id}`,
+                params: {
+                    title: service.title,
+                    provider: service.provider,
+                    category: service.category
+                }
+            });
+        }
     }, []);
 
     const handlePopularServiceBookmark = useCallback((id: string) => {
@@ -173,7 +188,7 @@ export default function HomeScreen() {
             >
                 {/* Profile Header */}
                 <ProfileHeader
-                    user={user}
+                    user={USER_DATA}
                     onNotificationPress={handleNotificationPress}
                     onBookmarkPress={handleBookmarkPress}
                 />
@@ -204,13 +219,13 @@ export default function HomeScreen() {
                         disableIntervalMomentum={true}
                         contentContainerStyle={styles.bannerScroll}
                     >
-                        {specialOffers.map((offer, index) => (
+                        {SPECIAL_OFFERS.map((offer, index) => (
                             <SpecialOfferBanner
                                 key={offer.id}
                                 offer={offer}
                                 width={BANNER_WIDTH}
                                 currentIndex={index}
-                                totalItems={specialOffers.length}
+                                totalItems={SPECIAL_OFFERS.length}
                             />
                         ))}
                     </ScrollView>
@@ -223,7 +238,7 @@ export default function HomeScreen() {
                         onSeeAllPress={handleSeeAllServices}
                     />
                     <View style={styles.servicesGrid}>
-                        {services.map((service) => (
+                        {SERVICES.map((service) => (
                             <View key={service.id} style={{ width: ITEM_WIDTH }}>
                                 <ServiceIcon
                                     service={service}
@@ -241,7 +256,7 @@ export default function HomeScreen() {
                         onSeeAllPress={handleSeeAllPopular}
                     />
                     <View style={styles.popularList}>
-                        {popularServices.map((service) => (
+                        {POPULAR_SERVICES.map((service) => (
                             <PopularServiceCard
                                 key={service.id}
                                 service={service}

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -67,13 +67,33 @@ export default function BookmarksScreen() {
     }, [selectedCategory]);
 
     const handleServicePress = useCallback((id: string) => {
-        console.log('Service pressed:', id);
+        const service = MOCK_BOOKMARKS.find(s => s.id === id);
+        if (service) {
+            router.push({
+                pathname: `/service-detail/${id}`,
+                params: {
+                    title: service.title,
+                    provider: service.provider,
+                    category: service.category
+                }
+            });
+        }
     }, []);
 
     const handleBookmarkToggle = useCallback((id: string) => {
         console.log('Toggle bookmark:', id);
         // In a real app, this would update the global state or API
     }, []);
+
+    const renderItem = useCallback(({ item }: { item: PopularService }) => (
+        <View style={styles.cardWrapper}>
+            <PopularServiceCard
+                service={item}
+                onPress={handleServicePress}
+                onBookmarkPress={handleBookmarkToggle}
+            />
+        </View>
+    ), [handleServicePress, handleBookmarkToggle]);
 
     return (
         <View style={styles.container}>
@@ -101,27 +121,20 @@ export default function BookmarksScreen() {
             />
 
             {/* Bookmarks List */}
-            <ScrollView
+            <FlatList
+                data={filteredBookmarks}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
-            >
-                {filteredBookmarks.map((service) => (
-                    <View key={service.id} style={styles.cardWrapper}>
-                        <PopularServiceCard
-                            service={service}
-                            onPress={handleServicePress}
-                            onBookmarkPress={handleBookmarkToggle}
-                        />
-                    </View>
-                ))}
-                {filteredBookmarks.length === 0 && (
+                ListEmptyComponent={
                     <View style={styles.emptyContainer}>
                         <Ionicons name="bookmark-outline" size={64} color="#EEE" />
                         <Text style={styles.emptyText}>No bookmarks found in this category</Text>
                     </View>
-                )}
-            </ScrollView>
+                }
+            />
         </View>
     );
 }

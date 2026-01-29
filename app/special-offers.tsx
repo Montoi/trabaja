@@ -1,10 +1,11 @@
-import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SpecialOfferBanner } from '../components/home/SpecialOfferBanner';
 import type { SpecialOffer } from '../types/home';
+import { useCallback } from 'react';
 
 const SPECIAL_OFFERS: SpecialOffer[] = [
     {
@@ -50,6 +51,15 @@ const BANNER_WIDTH = SCREEN_WIDTH - 48;
 export default function SpecialOffersScreen() {
     const insets = useSafeAreaInsets();
 
+    const renderItem = useCallback(({ item }: { item: SpecialOffer }) => (
+        <View style={styles.bannerWrapper}>
+            <SpecialOfferBanner
+                offer={item}
+                width={BANNER_WIDTH}
+            />
+        </View>
+    ), []);
+
     return (
         <View style={styles.container}>
             <StatusBar style="dark" />
@@ -68,20 +78,14 @@ export default function SpecialOffersScreen() {
                 </View>
             </View>
 
-            <ScrollView
+            <FlatList
+                data={SPECIAL_OFFERS}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
-            >
-                {SPECIAL_OFFERS.map((offer) => (
-                    <View key={offer.id} style={styles.bannerWrapper}>
-                        <SpecialOfferBanner
-                            offer={offer}
-                            width={BANNER_WIDTH}
-                        />
-                    </View>
-                ))}
-            </ScrollView>
+            />
         </View>
     );
 }

@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { PopularServiceCard } from '../components/home/PopularServiceCard';
 import type { PopularService } from '../types/home';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 
 const POPULAR_SERVICES: PopularService[] = [
     // Cleaning
@@ -76,13 +76,33 @@ export default function PopularServicesScreen() {
         return `${category} Services`;
     }, [category]);
 
-    const handleServicePress = (id: string) => {
-        console.log('Service pressed:', id);
-    };
+    const handleServicePress = useCallback((id: string) => {
+        const service = POPULAR_SERVICES.find(s => s.id === id);
+        if (service) {
+            router.push({
+                pathname: `/service-detail/${id}`,
+                params: {
+                    title: service.title,
+                    provider: service.provider,
+                    category: service.category
+                }
+            });
+        }
+    }, []);
 
-    const handleBookmarkToggle = (id: string) => {
+    const handleBookmarkToggle = useCallback((id: string) => {
         console.log('Toggle bookmark:', id);
-    };
+    }, []);
+
+    const renderItem = useCallback(({ item }: { item: PopularService }) => (
+        <View style={styles.cardWrapper}>
+            <PopularServiceCard
+                service={item}
+                onPress={handleServicePress}
+                onBookmarkPress={handleBookmarkToggle}
+            />
+        </View>
+    ), [handleServicePress, handleBookmarkToggle]);
 
     return (
         <View style={styles.container}>
@@ -102,27 +122,20 @@ export default function PopularServicesScreen() {
                 </View>
             </View>
 
-            <ScrollView
+            <FlatList
+                data={filteredServices}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
-            >
-                {filteredServices.map((service) => (
-                    <View key={service.id} style={styles.cardWrapper}>
-                        <PopularServiceCard
-                            service={service}
-                            onPress={handleServicePress}
-                            onBookmarkPress={handleBookmarkToggle}
-                        />
-                    </View>
-                ))}
-                {filteredServices.length === 0 && (
+                ListEmptyComponent={
                     <View style={styles.emptyContainer}>
                         <Ionicons name="search-outline" size={64} color="#EEE" />
                         <Text style={styles.emptyText}>No services found in this category</Text>
                     </View>
-                )}
-            </ScrollView>
+                }
+            />
         </View>
     );
 }

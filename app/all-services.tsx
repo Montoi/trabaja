@@ -1,10 +1,11 @@
-import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ServiceIcon } from '../components/home/ServiceIcon';
 import type { Service } from '../types/home';
+import { useCallback } from 'react';
 
 const ALL_SERVICES: Service[] = [
     {
@@ -38,7 +39,7 @@ const ALL_SERVICES: Service[] = [
     {
         id: '5',
         name: 'Appliance',
-        icon: 'refrigerator-outline',
+        icon: 'tv-outline',
         iconColor: '#DC2626',
         bgColor: '#FEE2E2',
     },
@@ -108,7 +109,7 @@ const ITEM_WIDTH = (SCREEN_WIDTH - (GRID_PADDING * 2) - (COLUMN_GAP * 3)) / 4;
 export default function AllServicesScreen() {
     const insets = useSafeAreaInsets();
 
-    const handleServicePress = (id: string) => {
+    const handleServicePress = useCallback((id: string) => {
         const service = ALL_SERVICES.find(s => s.id === id);
         if (service) {
             router.push({
@@ -116,7 +117,16 @@ export default function AllServicesScreen() {
                 params: { category: service.name }
             });
         }
-    };
+    }, []);
+
+    const renderItem = useCallback(({ item }: { item: Service }) => (
+        <View style={[styles.gridItem, { width: ITEM_WIDTH }]}>
+            <ServiceIcon
+                service={item}
+                onPress={handleServicePress}
+            />
+        </View>
+    ), [handleServicePress]);
 
     return (
         <View style={styles.container}>
@@ -136,22 +146,16 @@ export default function AllServicesScreen() {
                 </View>
             </View>
 
-            <ScrollView
+            <FlatList
+                data={ALL_SERVICES}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                numColumns={4}
+                columnWrapperStyle={styles.columnWrapper}
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
-            >
-                <View style={styles.grid}>
-                    {ALL_SERVICES.map((service) => (
-                        <View key={service.id} style={[styles.gridItem, { width: ITEM_WIDTH }]}>
-                            <ServiceIcon
-                                service={service}
-                                onPress={handleServicePress}
-                            />
-                        </View>
-                    ))}
-                </View>
-            </ScrollView>
+            />
         </View>
     );
 }
@@ -203,11 +207,9 @@ const styles = StyleSheet.create({
         paddingTop: 16,
         paddingBottom: 40,
     },
-    grid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 16, // This is COLUMN_GAP
-        rowGap: 32, // More space between rows
+    columnWrapper: {
+        justifyContent: 'space-between',
+        marginBottom: 32,
     },
     gridItem: {
         // Width is handled dynamically
