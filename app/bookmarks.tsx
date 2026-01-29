@@ -7,55 +7,12 @@ import { useState, useCallback, useMemo } from 'react';
 import { PopularServiceCard } from '../components/home/PopularServiceCard';
 import { CategoryFilter } from '../components/common';
 import type { PopularService } from '../types/home';
+import { Theme } from '../constants/Theme';
+import { POPULAR_SERVICES } from '../constants/MockData';
 
 const CATEGORIES = ['All', 'Cleaning', 'Repairing', 'Painting', 'Laundry', 'Appliance', 'Plumbing', 'Shifting'];
 
-const MOCK_BOOKMARKS: PopularService[] = [
-    {
-        id: '1',
-        title: 'House Cleaning',
-        category: 'Cleaning',
-        provider: 'Jenny Wilson',
-        price: 24,
-        rating: 4.8,
-        reviewCount: 8289,
-        image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=500',
-        isBookmarked: true,
-    },
-    {
-        id: '2',
-        title: 'AC Repairing',
-        category: 'Repairing',
-        provider: 'Rayford Chenail',
-        price: 26,
-        rating: 4.9,
-        reviewCount: 6182,
-        image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=500',
-        isBookmarked: true,
-    },
-    {
-        id: '3',
-        title: 'Laundry Services',
-        category: 'Laundry',
-        provider: 'Janetta Rotolo',
-        price: 19,
-        rating: 4.7,
-        reviewCount: 7938,
-        image: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?q=80&w=500',
-        isBookmarked: true,
-    },
-    {
-        id: '4',
-        title: 'Motorcycle Repairing',
-        category: 'Repairing',
-        provider: 'Freida Varnes',
-        price: 23,
-        rating: 4.9,
-        reviewCount: 6182,
-        image: 'https://images.unsplash.com/photo-1558981403-c5f91cbba527?q=80&w=500',
-        isBookmarked: true,
-    },
-];
+const MOCK_BOOKMARKS: PopularService[] = POPULAR_SERVICES.filter(s => s.isBookmarked);
 
 export default function BookmarksScreen() {
     const insets = useSafeAreaInsets();
@@ -103,12 +60,12 @@ export default function BookmarksScreen() {
                 <View style={styles.headerContent}>
                     <View style={styles.headerLeft}>
                         <Pressable onPress={() => router.back()} style={styles.backButton}>
-                            <Ionicons name="arrow-back" size={24} color="#000" />
+                            <Ionicons name="arrow-back" size={24} color={Theme.colors.textPrimary} />
                         </Pressable>
                         <Text style={styles.headerTitle}>My Bookmark</Text>
                     </View>
                     <Pressable style={styles.moreButton}>
-                        <Ionicons name="ellipsis-horizontal" size={20} color="#000" />
+                        <Ionicons name="ellipsis-horizontal" size={20} color={Theme.colors.textPrimary} />
                     </Pressable>
                 </View>
             </View>
@@ -142,7 +99,7 @@ export default function BookmarksScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F9FA',
+        backgroundColor: Theme.colors.background,
     },
     header: {
         // Transparent to show container background
@@ -166,7 +123,7 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 20,
         fontWeight: '700',
-        color: '#000',
+        color: Theme.colors.textPrimary,
         marginLeft: 8,
     },
     moreButton: {
@@ -174,7 +131,7 @@ const styles = StyleSheet.create({
         height: 40,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: '#E2E8F0',
+        borderColor: Theme.colors.border,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -198,7 +155,7 @@ const styles = StyleSheet.create({
     emptyText: {
         marginTop: 16,
         fontSize: 16,
-        color: '#9E9E9E',
+        color: Theme.colors.textPlaceholder,
         fontWeight: '500',
     },
 });

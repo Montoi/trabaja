@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { memo, useCallback } from 'react';
+import { Theme } from '../constants/Theme';
 
 interface NotificationItem {
     id: string;
@@ -116,12 +117,12 @@ export default function NotificationsScreen() {
                 <View style={styles.headerContent}>
                     <View style={styles.headerLeft}>
                         <Pressable onPress={() => router.back()} style={styles.backButton}>
-                            <Ionicons name="arrow-back" size={24} color="#000" />
+                            <Ionicons name="arrow-back" size={24} color={Theme.colors.textPrimary} />
                         </Pressable>
                         <Text style={styles.headerTitle}>Notification</Text>
                     </View>
                     <Pressable style={styles.moreButton}>
-                        <Ionicons name="ellipsis-horizontal" size={20} color="#000" />
+                        <Ionicons name="ellipsis-horizontal" size={20} color={Theme.colors.textPrimary} />
                     </Pressable>
                 </View>
             </View>
