@@ -1,19 +1,13 @@
 import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { memo, useCallback } from 'react';
 
 export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
                 headerShown: true,
-                tabBarStyle: {
-                    backgroundColor: '#fff',
-                    borderTopWidth: 1,
-                    borderTopColor: '#e0e0e0',
-                    height: 60,
-                    paddingBottom: 8,
-                    paddingTop: 8,
-                },
+                tabBarStyle: styles.tabBarStyle,
             }}
             tabBar={(props) => <CustomTabBar {...props} />}
         >
@@ -42,7 +36,79 @@ export default function TabLayout() {
     );
 }
 
+interface TabItemProps {
+    route: any;
+    index: number;
+    isFocused: boolean;
+    label: string;
+    accessibilityLabel?: string;
+    testID?: string;
+    onPress: () => void;
+    onLongPress: () => void;
+}
+
+// Memoized tab item component to prevent unnecessary re-renders
+const TabItem = memo(function TabItem({
+    route,
+    isFocused,
+    label,
+    accessibilityLabel,
+    testID,
+    onPress,
+    onLongPress,
+}: TabItemProps) {
+    return (
+        <Pressable
+            key={route.key}
+            accessibilityRole="button"
+            accessibilityState={isFocused ? { selected: true } : {}}
+            accessibilityLabel={accessibilityLabel}
+            testID={testID}
+            onPress={onPress}
+            onLongPress={onLongPress}
+            style={getPressableStyle}
+        >
+            <View style={[styles.tabItem, isFocused && styles.tabItemFocused]}>
+                <Text style={[styles.tabLabel, isFocused && styles.tabLabelFocused]}>
+                    {label}
+                </Text>
+            </View>
+        </Pressable>
+    );
+});
+
+// Stable style function reference (hoisted outside component)
+function getPressableStyle({ pressed }: { pressed: boolean }) {
+    return [styles.tabButton, pressed && styles.tabButtonPressed];
+}
+
 function CustomTabBar({ state, descriptors, navigation }: any) {
+    // Hoisted callback creator - single function instance
+    const createTabPressHandler = useCallback(
+        (routeName: string, routeKey: string, isFocused: boolean) => () => {
+            const event = navigation.emit({
+                type: 'tabPress',
+                target: routeKey,
+                canPreventDefault: true,
+            });
+
+            if (!isFocused && !event.defaultPrevented) {
+                navigation.navigate(routeName);
+            }
+        },
+        [navigation]
+    );
+
+    const createTabLongPressHandler = useCallback(
+        (routeKey: string) => () => {
+            navigation.emit({
+                type: 'tabLongPress',
+                target: routeKey,
+            });
+        },
+        [navigation]
+    );
+
     return (
         <View style={styles.tabBar}>
             {state.routes.map((route: any, index: number) => {
@@ -50,50 +116,18 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                 const label = options.title || route.name;
                 const isFocused = state.index === index;
 
-                const onPress = () => {
-                    const event = navigation.emit({
-                        type: 'tabPress',
-                        target: route.key,
-                        canPreventDefault: true,
-                    });
-
-                    if (!isFocused && !event.defaultPrevented) {
-                        navigation.navigate(route.name);
-                    }
-                };
-
-                const onLongPress = () => {
-                    navigation.emit({
-                        type: 'tabLongPress',
-                        target: route.key,
-                    });
-                };
-
                 return (
-                    <Pressable
+                    <TabItem
                         key={route.key}
-                        accessibilityRole="button"
-                        accessibilityState={isFocused ? { selected: true } : {}}
+                        route={route}
+                        index={index}
+                        isFocused={isFocused}
+                        label={label}
                         accessibilityLabel={options.tabBarAccessibilityLabel}
                         testID={options.tabBarTestID}
-                        onPress={onPress}
-                        onLongPress={onLongPress}
-                        style={({ pressed }) => [
-                            styles.tabButton,
-                            pressed && styles.tabButtonPressed,
-                        ]}
-                    >
-                        <View style={[styles.tabItem, isFocused && styles.tabItemFocused]}>
-                            <Text
-                                style={[
-                                    styles.tabLabel,
-                                    isFocused && styles.tabLabelFocused,
-                                ]}
-                            >
-                                {label}
-                            </Text>
-                        </View>
-                    </Pressable>
+                        onPress={createTabPressHandler(route.name, route.key, isFocused)}
+                        onLongPress={createTabLongPressHandler(route.key)}
+                    />
                 );
             })}
         </View>
@@ -101,6 +135,14 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
 }
 
 const styles = StyleSheet.create({
+    tabBarStyle: {
+        backgroundColor: '#fff',
+        borderTopWidth: 1,
+        borderTopColor: '#e0e0e0',
+        height: 60,
+        paddingBottom: 8,
+        paddingTop: 8,
+    },
     tabBar: {
         flexDirection: 'row',
         backgroundColor: '#fff',
