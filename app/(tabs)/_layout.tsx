@@ -1,6 +1,8 @@
 import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { memo, useCallback } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
     return (
@@ -41,6 +43,7 @@ interface TabItemProps {
     index: number;
     isFocused: boolean;
     label: string;
+    icon?: string;
     accessibilityLabel?: string;
     testID?: string;
     onPress: () => void;
@@ -52,6 +55,7 @@ const TabItem = memo(function TabItem({
     route,
     isFocused,
     label,
+    icon,
     accessibilityLabel,
     testID,
     onPress,
@@ -69,6 +73,13 @@ const TabItem = memo(function TabItem({
             style={getPressableStyle}
         >
             <View style={[styles.tabItem, isFocused && styles.tabItemFocused]}>
+                {icon && (
+                    <Ionicons
+                        name={icon as any}
+                        size={24}
+                        color={isFocused ? '#7210FF' : '#999'}
+                    />
+                )}
                 <Text style={[styles.tabLabel, isFocused && styles.tabLabelFocused]}>
                     {label}
                 </Text>
@@ -83,6 +94,9 @@ function getPressableStyle({ pressed }: { pressed: boolean }) {
 }
 
 function CustomTabBar({ state, descriptors, navigation }: any) {
+    // Get safe area insets to prevent tab bar from being covered by system UI
+    const insets = useSafeAreaInsets();
+
     // Hoisted callback creator - single function instance
     const createTabPressHandler = useCallback(
         (routeName: string, routeKey: string, isFocused: boolean) => () => {
@@ -109,8 +123,15 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
         [navigation]
     );
 
+    // Icon mapping for each tab
+    const iconMap: Record<string, string> = {
+        index: 'home',
+        stats: 'stats-chart',
+        profile: 'person',
+    };
+
     return (
-        <View style={styles.tabBar}>
+        <View style={[styles.tabBar, { paddingBottom: insets.bottom + 4 }]}>
             {state.routes.map((route: any, index: number) => {
                 const { options } = descriptors[route.key];
                 const label = options.title || route.name;
@@ -123,6 +144,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
                         index={index}
                         isFocused={isFocused}
                         label={label}
+                        icon={iconMap[route.name]}
                         accessibilityLabel={options.tabBarAccessibilityLabel}
                         testID={options.tabBarTestID}
                         onPress={createTabPressHandler(route.name, route.key, isFocused)}
@@ -148,8 +170,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderTopWidth: 1,
         borderTopColor: '#e0e0e0',
-        height: 60,
-        paddingBottom: 8,
         paddingTop: 8,
     },
     tabButton: {
@@ -163,15 +183,16 @@ const styles = StyleSheet.create({
     tabItem: {
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 4,
+        paddingVertical: 6,
         paddingHorizontal: 12,
         borderRadius: 8,
+        gap: 4,
     },
     tabItemFocused: {
         backgroundColor: '#f0f0f0',
     },
     tabLabel: {
-        fontSize: 12,
+        fontSize: 10,
         color: '#666',
         fontWeight: '500',
     },
