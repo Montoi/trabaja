@@ -140,11 +140,13 @@ export default function HomeScreen() {
 
     return (
         <View style={styles.container}>
+            {/* Top Safe Area Guard */}
+            <View style={[styles.topGuard, { height: insets.top }]} />
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={[
                     styles.scrollContent,
-                    { paddingTop: insets.top, paddingBottom: 120 }
+                    { paddingTop: 20, paddingBottom: 120 }
                 ]}
             >
                 {/* Profile Header */}

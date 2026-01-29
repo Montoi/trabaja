@@ -28,6 +28,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
+    topGuard: {
+        backgroundColor: '#fff',
+        width: '100%',
+        zIndex: 10,
+    },
     scrollContent: {
         alignItems: 'center',
         justifyContent: 'center',
