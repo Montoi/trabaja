@@ -1,9 +1,12 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function StatsScreen() {
+    const insets = useSafeAreaInsets();
+
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top }]}>
             <Text style={styles.title}>Estadísticas</Text>
             <Text style={styles.subtitle}>
                 Aquí podrás ver tus estadísticas y métricas

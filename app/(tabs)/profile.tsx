@@ -1,9 +1,12 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ProfileScreen() {
+    const insets = useSafeAreaInsets();
+
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top }]}>
             <Text style={styles.title}>Configuración de Perfil</Text>
             <Text style={styles.subtitle}>
                 Gestiona tu perfil y preferencias

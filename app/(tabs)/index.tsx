@@ -1,6 +1,7 @@
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useState, useCallback } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SectionHeader, SearchBar } from '../components/common';
 import {
     ProfileHeader,
@@ -12,6 +13,7 @@ import type { User, SpecialOffer, Service, PopularService } from '../types/home'
 
 export default function HomeScreen() {
     const [searchQuery, setSearchQuery] = useState('');
+    const insets = useSafeAreaInsets();
 
     // Mock data
     const user: User = {
@@ -104,7 +106,13 @@ export default function HomeScreen() {
 
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={[
+                    styles.scrollContent,
+                    { paddingTop: insets.top }
+                ]}
+            >
                 {/* Profile Header */}
                 <ProfileHeader
                     user={user}

@@ -8,7 +8,7 @@ export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
-                headerShown: true,
+                headerShown: false,
                 tabBarStyle: styles.tabBarStyle,
             }}
             tabBar={(props) => <CustomTabBar {...props} />}
