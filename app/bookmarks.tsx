@@ -31,7 +31,8 @@ export default function BookmarksScreen() {
                 params: {
                     title: service.title,
                     provider: service.provider,
-                    category: service.category
+                    category: service.category,
+                    image: service.image
                 }
             });
         }

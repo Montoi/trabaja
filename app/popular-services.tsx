@@ -31,7 +31,8 @@ export default function PopularServicesScreen() {
                 params: {
                     title: service.title,
                     provider: service.provider,
-                    category: service.category
+                    category: service.category,
+                    image: service.image
                 }
             });
         }

@@ -83,7 +83,8 @@ export default function HomeScreen() {
                 params: {
                     title: service.title,
                     provider: service.provider,
-                    category: service.category
+                    category: service.category,
+                    image: service.image
                 }
             });
         }

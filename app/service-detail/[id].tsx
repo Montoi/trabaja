@@ -16,7 +16,13 @@ import { BottomActionTab } from '../../components/service-detail/BottomActionTab
 
 export default function ServiceDetailScreen() {
     const insets = useSafeAreaInsets();
-    const { id, title = 'House Cleaning', provider = 'Jenny Wilson', category = 'Cleaning' } = useLocalSearchParams();
+    const {
+        id,
+        title = 'House Cleaning',
+        provider = 'Jenny Wilson',
+        category = 'Cleaning',
+        image = 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80'
+    } = useLocalSearchParams<{ id: string; title: string; provider: string; category: string; image: string }>();
     const [selectedRating, setSelectedRating] = useState('All');
 
     const handleBack = useCallback(() => router.back(), []);
@@ -43,7 +49,7 @@ export default function ServiceDetailScreen() {
                 showsVerticalScrollIndicator={false}
             >
                 <DetailHeader
-                    image="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80"
+                    image={image}
                     onBack={handleBack}
                     onShare={handleShare}
                     topInset={insets.top}
