@@ -100,8 +100,7 @@ export default function PaymentMethodsScreen() {
     }, []);
 
     const handleAddCard = useCallback(() => {
-        console.log('Add new card');
-        // TODO: Navigate to add card screen
+        router.push('/add-card');
     }, []);
 
     const handleMoreOptions = useCallback(() => {
