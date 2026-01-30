@@ -118,7 +118,7 @@ export default function ProfileScreen() {
                     <MenuItem icon="person-outline" title="Edit Profile" onPress={() => router.push('/edit-profile')} />
                     <MenuItem icon="notifications-outline" title="Notification" onPress={() => router.push('/notification-settings')} />
                     <MenuItem icon="wallet-outline" title="Payment" onPress={() => router.push('/payment-methods')} />
-                    <MenuItem icon="shield-checkmark-outline" title="Security" onPress={() => { }} />
+                    <MenuItem icon="shield-checkmark-outline" title="Security" onPress={() => router.push('/security')} />
                     <MenuItem
                         icon="language-outline"
                         title="Language"
