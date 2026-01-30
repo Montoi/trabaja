@@ -71,7 +71,7 @@ export default function ProfileScreen() {
     const insets = useSafeAreaInsets();
     const [isDarkMode, setIsDarkMode] = useState(false);
 
-    const handleEditProfile = useCallback(() => console.log('Edit Profile'), []);
+    const handleEditProfile = useCallback(() => router.push('/edit-profile'), []);
     const handleLogout = useCallback(() => console.log('Logout'), []);
 
     return (
@@ -115,7 +115,7 @@ export default function ProfileScreen() {
 
                 {/* Menu List */}
                 <View style={styles.menuList}>
-                    <MenuItem icon="person-outline" title="Edit Profile" onPress={() => { }} />
+                    <MenuItem icon="person-outline" title="Edit Profile" onPress={() => router.push('/edit-profile')} />
                     <MenuItem icon="notifications-outline" title="Notification" onPress={() => { }} />
                     <MenuItem icon="wallet-outline" title="Payment" onPress={() => { }} />
                     <MenuItem icon="shield-checkmark-outline" title="Security" onPress={() => { }} />
