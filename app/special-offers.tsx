@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, FlatList, Pressable, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -78,7 +79,7 @@ export default function SpecialOffersScreen() {
                 </View>
             </View>
 
-            <FlatList
+            <FlashList
                 data={SPECIAL_OFFERS}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}

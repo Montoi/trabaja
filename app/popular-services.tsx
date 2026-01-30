@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -70,7 +71,7 @@ export default function PopularServicesScreen() {
                 </View>
             </View>
 
-            <FlatList
+            <FlashList
                 data={filteredServices}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}

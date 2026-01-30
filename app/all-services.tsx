@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, FlatList, Pressable, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -28,7 +29,7 @@ export default function AllServicesScreen() {
     }, []);
 
     const renderItem = useCallback(({ item }: { item: Service }) => (
-        <View style={[styles.gridItem, { width: ITEM_WIDTH }]}>
+        <View style={[styles.gridItem, { width: ITEM_WIDTH, marginBottom: 32 }]}>
             <ServiceIcon
                 service={item}
                 onPress={handleServicePress}
@@ -54,12 +55,11 @@ export default function AllServicesScreen() {
                 </View>
             </View>
 
-            <FlatList
+            <FlashList
                 data={SERVICES}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
                 numColumns={4}
-                columnWrapperStyle={styles.columnWrapper}
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
