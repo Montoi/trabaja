@@ -88,7 +88,7 @@ export default function LanguageScreen() {
                         <Ionicons name="arrow-back" size={24} color={Theme.colors.textPrimary} />
                     </Pressable>
                     <Text style={styles.headerTitle}>Language</Text>
-                    <View style={{ width: 40 }} />
+                    <View style={styles.headerSpacer} />
                 </View>
             </View>
 
@@ -140,6 +140,9 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: '700',
         color: Theme.colors.textPrimary,
+    },
+    headerSpacer: {
+        width: 40,
     },
     scrollContent: {
         paddingHorizontal: 24,

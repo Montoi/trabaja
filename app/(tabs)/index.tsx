@@ -165,7 +165,7 @@ export default function HomeScreen() {
                     />
                     <View style={styles.servicesGrid}>
                         {SERVICES.slice(0, 7).map((service) => (
-                            <View key={service.id} style={{ width: ITEM_WIDTH }}>
+                            <View key={service.id} style={styles.serviceItem}>
                                 <ServiceIcon
                                     service={service}
                                     onPress={handleServicePress}
@@ -173,7 +173,7 @@ export default function HomeScreen() {
                             </View>
                         ))}
                         {/* More Button */}
-                        <View style={{ width: ITEM_WIDTH }}>
+                        <View style={styles.serviceItem}>
                             <ServiceIcon
                                 service={SERVICES[SERVICES.length - 1]} // The "More" service from MockData
                                 onPress={handleSeeAllServices}
@@ -244,6 +244,9 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         gap: COLUMN_GAP,
         rowGap: 24,
+    },
+    serviceItem: {
+        width: ITEM_WIDTH,
     },
     popularList: {
         gap: 16,
