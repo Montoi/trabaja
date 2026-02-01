@@ -1,92 +1,91 @@
-import { Tabs } from 'expo-router';
+import React, { useCallback, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, Platform, Dimensions } from 'react-native';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
     withSpring,
-    interpolateColor,
-    useAnimatedProps
+    interpolateColor
 } from 'react-native-reanimated';
 import { useLanguage } from '../../contexts/LanguageContext';
+import PagerView from 'react-native-pager-view';
+import { Theme } from '../../constants/Theme';
+
+// Import screens directly
+import HomeScreen from './index';
+import MyBookingsScreen from './my-bookings';
+import StatsScreen from './stats';
+import ProfileScreen from './profile';
+
+const TAB_CONFIG = [
+    { name: 'index', title: 'home', icon: 'home', component: HomeScreen },
+    { name: 'my-bookings', title: 'bookings', icon: 'calendar', component: MyBookingsScreen },
+    { name: 'stats', title: 'stats', icon: 'stats-chart', component: StatsScreen },
+    { name: 'profile', title: 'profile', icon: 'person', component: ProfileScreen },
+] as const;
 
 export default function TabLayout() {
     const { t } = useLanguage();
+    const [currentPage, setCurrentPage] = useState(0);
+    const pagerRef = React.useRef<PagerView>(null);
+
+    const handlePageSelected = useCallback((e: any) => {
+        setCurrentPage(e.nativeEvent.position);
+    }, []);
+
+    const handleTabPress = useCallback((index: number) => {
+        pagerRef.current?.setPage(index);
+        setCurrentPage(index);
+    }, []);
 
     return (
-        <Tabs
-            screenOptions={{
-                headerShown: false,
-                tabBarStyle: { position: 'absolute' },
-            }}
-            tabBar={(props) => <CustomTabBar {...props} />}
-        >
-            <Tabs.Screen
-                name="index"
-                options={{
-                    title: t.tabs.home,
-                    headerTitle: 'Inicio',
-                }}
+        <View style={{ flex: 1 }}>
+            {/* Swipeable Content */}
+            <PagerView
+                ref={pagerRef}
+                style={{ flex: 1 }}
+                initialPage={0}
+                onPageSelected={handlePageSelected}
+            >
+                {TAB_CONFIG.map((tab, index) => (
+                    <View key={index} style={{ flex: 1 }}>
+                        <tab.component />
+                    </View>
+                ))}
+            </PagerView>
+
+            {/* Fixed Tab Bar */}
+            <CustomTabBar
+                currentPage={currentPage}
+                onTabPress={handleTabPress}
+                tabs={TAB_CONFIG}
             />
-            <Tabs.Screen
-                name="my-bookings"
-                options={{
-                    title: t.tabs.bookings,
-                    headerTitle: 'My Bookings',
-                }}
-            />
-            <Tabs.Screen
-                name="stats"
-                options={{
-                    title: t.tabs.stats,
-                    headerTitle: 'Estadísticas',
-                }}
-            />
-            <Tabs.Screen
-                name="profile"
-                options={{
-                    title: t.tabs.profile,
-                    headerTitle: 'Configuración de Perfil',
-                }}
-            />
-        </Tabs>
+        </View>
     );
 }
 
 interface TabItemProps {
-    route: any;
     index: number;
     isFocused: boolean;
     label: string;
     icon?: string;
-    accessibilityLabel?: string;
-    testID?: string;
     onPress: () => void;
-    onLongPress: () => void;
 }
 
 // Memoized tab item component to prevent unnecessary re-renders
 const TabItem = memo(function TabItem({
-    route,
     isFocused,
     label,
     icon,
-    accessibilityLabel,
-    testID,
     onPress,
-    onLongPress,
 }: TabItemProps) {
     return (
         <Pressable
-            key={route.key}
             accessibilityRole="button"
             accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={accessibilityLabel}
-            testID={testID}
             onPress={onPress}
-            onLongPress={onLongPress}
             style={styles.tabButton}
             android_ripple={{ color: 'rgba(114, 16, 255, 0.1)', borderless: true }}
         >
@@ -106,43 +105,16 @@ const TabItem = memo(function TabItem({
     );
 });
 
-function CustomTabBar({ state, descriptors, navigation }: any) {
+interface CustomTabBarProps {
+    currentPage: number;
+    onTabPress: (index: number) => void;
+    tabs: readonly typeof TAB_CONFIG[number][];
+}
+
+function CustomTabBar({ currentPage, onTabPress, tabs }: CustomTabBarProps) {
     // Get safe area insets to prevent tab bar from being covered by system UI
     const insets = useSafeAreaInsets();
-
-    // Hoisted callback creator - single function instance
-    const createTabPressHandler = useCallback(
-        (routeName: string, routeKey: string, isFocused: boolean) => () => {
-            const event = navigation.emit({
-                type: 'tabPress',
-                target: routeKey,
-                canPreventDefault: true,
-            });
-
-            if (!isFocused && !event.defaultPrevented) {
-                navigation.navigate(routeName);
-            }
-        },
-        [navigation]
-    );
-
-    const createTabLongPressHandler = useCallback(
-        (routeKey: string) => () => {
-            navigation.emit({
-                type: 'tabLongPress',
-                target: routeKey,
-            });
-        },
-        [navigation]
-    );
-
-    // Icon mapping for each tab
-    const iconMap: Record<string, string> = {
-        index: 'home',
-        'my-bookings': 'calendar',
-        stats: 'stats-chart',
-        profile: 'person',
-    };
+    const { t } = useLanguage();
 
     // Standardize floating position to be 100% stable
     // We use the safe area bottom inset plus a fixed gap
@@ -150,18 +122,18 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
 
     // Animation logic
     const totalWidth = Dimensions.get('window').width - 60; // 60 = marginHorizontal 30 * 2
-    const tabWidth = totalWidth / state.routes.length;
+    const tabWidth = totalWidth / tabs.length;
     const pillPadding = 8;
     const pillWidth = tabWidth - (pillPadding * 2);
-    const translateX = useSharedValue(state.index * tabWidth + pillPadding);
+    const translateX = useSharedValue(currentPage * tabWidth + pillPadding);
 
     useEffect(() => {
-        translateX.value = withSpring(state.index * tabWidth + pillPadding, {
+        translateX.value = withSpring(currentPage * tabWidth + pillPadding, {
             damping: 20,
             stiffness: 150,
             mass: 0.8,
         });
-    }, [state.index, tabWidth, translateX]);
+    }, [currentPage, tabWidth, translateX]);
 
     const animatedPillStyle = useAnimatedStyle(() => ({
         transform: [{ translateX: translateX.value }],
@@ -179,23 +151,18 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
             />
 
             <View style={styles.buttonsContainer}>
-                {state.routes.map((route: any, index: number) => {
-                    const { options } = descriptors[route.key];
-                    const label = options.title || route.name;
-                    const isFocused = state.index === index;
+                {tabs.map((tab, index) => {
+                    const isFocused = currentPage === index;
+                    const label = t.tabs[tab.title as keyof typeof t.tabs];
 
                     return (
                         <TabItem
-                            key={route.key}
-                            route={route}
+                            key={index}
                             index={index}
                             isFocused={isFocused}
                             label={label}
-                            icon={iconMap[route.name]}
-                            accessibilityLabel={options.tabBarAccessibilityLabel}
-                            testID={options.tabBarTestID}
-                            onPress={createTabPressHandler(route.name, route.key, isFocused)}
-                            onLongPress={createTabLongPressHandler(route.key)}
+                            icon={tab.icon}
+                            onPress={() => onTabPress(index)}
                         />
                     );
                 })}
