@@ -28,6 +28,13 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
+                name="my-bookings"
+                options={{
+                    title: 'Bookings',
+                    headerTitle: 'My Bookings',
+                }}
+            />
+            <Tabs.Screen
                 name="stats"
                 options={{
                     title: 'Estadísticas',
@@ -129,6 +136,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
     // Icon mapping for each tab
     const iconMap: Record<string, string> = {
         index: 'home',
+        'my-bookings': 'calendar',
         stats: 'stats-chart',
         profile: 'person',
     };
