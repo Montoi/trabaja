@@ -134,7 +134,7 @@ export default function ProfileScreen() {
                         onSwitchChange={setIsDarkMode}
                     />
                     <MenuItem icon="lock-closed-outline" title="Privacy Policy" onPress={() => router.push('/privacy-policy')} />
-                    <MenuItem icon="help-circle-outline" title="Help Center" onPress={() => { }} />
+                    <MenuItem icon="help-circle-outline" title="Help Center" onPress={() => router.push('/help-center')} />
                     <MenuItem icon="people-outline" title="Invite Friends" onPress={() => { }} />
                     <MenuItem
                         icon="log-out-outline"
