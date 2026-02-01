@@ -33,4 +33,7 @@ export interface PopularService {
     reviewCount: number;
     image: string;
     isBookmarked: boolean;
+    isPopular: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,40 +9,50 @@ import { PopularServiceCard } from '../components/home/PopularServiceCard';
 import { CategoryFilter } from '../components/common';
 import type { PopularService } from '../types/home';
 import { Theme } from '../constants/Theme';
-import { POPULAR_SERVICES } from '../constants/MockData';
+import { useBookmarkedServices, useToggleBookmark } from '../hooks/useServices';
 
 const CATEGORIES = ['All', 'Cleaning', 'Repairing', 'Painting', 'Laundry', 'Appliance', 'Plumbing', 'Shifting'];
-
-const MOCK_BOOKMARKS: PopularService[] = POPULAR_SERVICES.filter(s => s.isBookmarked);
 
 export default function BookmarksScreen() {
     const insets = useSafeAreaInsets();
     const [selectedCategory, setSelectedCategory] = useState('All');
 
+    // Fetch bookmarked services from API
+    const { data: bookmarks, loading, error, refetch } = useBookmarkedServices();
+    const { toggleBookmark } = useToggleBookmark();
+
     const filteredBookmarks = useMemo(() => {
-        if (selectedCategory === 'All') return MOCK_BOOKMARKS;
-        return MOCK_BOOKMARKS.filter(item => item.category === selectedCategory);
-    }, [selectedCategory]);
+        if (selectedCategory === 'All') return bookmarks;
+        return bookmarks.filter(item => item.category === selectedCategory);
+    }, [selectedCategory, bookmarks]);
 
     const handleServicePress = useCallback((id: string) => {
-        const service = MOCK_BOOKMARKS.find(s => s.id === id);
+        const service = bookmarks.find(s => s.id === id);
         if (service) {
             router.push({
-                pathname: `/service-detail/${id}`,
+                pathname: '/service-details',
                 params: {
+                    id: service.id,
                     title: service.title,
                     provider: service.provider,
                     category: service.category,
-                    image: service.image
+                    price: service.price.toString(),
+                    rating: service.rating.toString(),
+                    reviewCount: service.reviewCount.toString(),
+                    image: service.image,
+                    isBookmarked: service.isBookmarked.toString(),
                 }
             });
         }
-    }, []);
+    }, [bookmarks]);
 
-    const handleBookmarkToggle = useCallback((id: string) => {
-        console.log('Toggle bookmark:', id);
-        // In a real app, this would update the global state or API
-    }, []);
+    const handleBookmarkToggle = useCallback(async (id: string) => {
+        const result = await toggleBookmark(id);
+        if (result) {
+            // Refetch bookmarks to update the list
+            refetch();
+        }
+    }, [toggleBookmark, refetch]);
 
     const renderItem = useCallback(({ item }: { item: PopularService }) => (
         <View style={styles.cardWrapper}>
@@ -80,20 +90,30 @@ export default function BookmarksScreen() {
             />
 
             {/* Bookmarks List */}
-            <FlashList
-                data={filteredBookmarks}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-                ListEmptyComponent={
-                    <View style={styles.emptyContainer}>
-                        <Ionicons name="bookmark-outline" size={64} color="#EEE" />
-                        <Text style={styles.emptyText}>No bookmarks found in this category</Text>
-                    </View>
-                }
-            />
+            {loading ? (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color={Theme.colors.primary} />
+                </View>
+            ) : error ? (
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>{error}</Text>
+                </View>
+            ) : (
+                <FlashList
+                    data={filteredBookmarks}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id}
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                    ListEmptyComponent={() => (
+                        <View style={styles.emptyContainer}>
+                            <Ionicons name="bookmark-outline" size={64} color="#EEE" />
+                            <Text style={styles.emptyText}>No bookmarks yet</Text>
+                        </View>
+                    )}
+                />
+            )}
         </View>
     );
 }
@@ -159,5 +179,23 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: Theme.colors.textPlaceholder,
         fontWeight: '500',
+    },
+    loadingContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 100,
+    },
+    errorContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 100,
+        paddingHorizontal: 40,
+    },
+    errorText: {
+        fontSize: 16,
+        color: Theme.colors.error,
+        textAlign: 'center',
     },
 });

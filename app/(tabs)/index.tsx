@@ -3,6 +3,8 @@ import {
     ScrollView,
     StyleSheet,
     Dimensions,
+    Text,
+    ActivityIndicator,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useState, useCallback } from 'react';
@@ -17,7 +19,8 @@ import {
 } from '../../components/home';
 import type { User, SpecialOffer, Service, PopularService } from '../../types/home';
 import { Theme } from '../../constants/Theme';
-import { USER_DATA, SPECIAL_OFFERS, SERVICES, POPULAR_SERVICES } from '../../constants/MockData';
+import { USER_DATA, SPECIAL_OFFERS, SERVICES } from '../../constants/MockData';
+import { usePopularServices, useToggleBookmark } from '../../hooks/useServices';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const BANNER_WIDTH = SCREEN_WIDTH - 48; // SCREEN_WIDTH - (paddingHorizontal * 2)
@@ -33,6 +36,10 @@ const ITEM_WIDTH = (SCREEN_WIDTH - (GRID_PADDING * 2) - (COLUMN_GAP * 3)) / 4;
 export default function HomeScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const insets = useSafeAreaInsets();
+
+    // Fetch popular services from API
+    const { data: popularServices, loading: servicesLoading, error: servicesError, refetch } = usePopularServices();
+    const { toggleBookmark, loading: bookmarkLoading } = useToggleBookmark();
 
     // Callbacks
     const handleNotificationPress = useCallback(() => {
@@ -76,19 +83,24 @@ export default function HomeScreen() {
     }, []);
 
     const handlePopularServicePress = useCallback((id: string) => {
-        const service = POPULAR_SERVICES.find(s => s.id === id);
+        const service = popularServices.find(s => s.id === id);
         if (service) {
             router.push({
-                pathname: `/service-detail/${id}`,
+                pathname: '/service-details',
                 params: {
+                    id: service.id,
                     title: service.title,
-                    provider: service.provider,
                     category: service.category,
-                    image: service.image
-                }
+                    provider: service.provider,
+                    price: service.price.toString(),
+                    rating: service.rating.toString(),
+                    reviewCount: service.reviewCount.toString(),
+                    image: service.image,
+                    isBookmarked: service.isBookmarked.toString(),
+                },
             });
         }
-    }, []);
+    }, [popularServices]);
 
     const handlePopularServiceBookmark = useCallback((id: string) => {
         console.log('Toggle bookmark:', id);
@@ -181,16 +193,26 @@ export default function HomeScreen() {
                         title="Most Popular Services"
                         onSeeAllPress={handleSeeAllPopular}
                     />
-                    <View style={styles.popularList}>
-                        {POPULAR_SERVICES.slice(0, 5).map((service) => (
-                            <PopularServiceCard
-                                key={service.id}
-                                service={service}
-                                onPress={handlePopularServicePress}
-                                onBookmarkPress={handlePopularServiceBookmark}
-                            />
-                        ))}
-                    </View>
+                    {servicesLoading ? (
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator size="large" color={Theme.colors.primary} />
+                        </View>
+                    ) : servicesError ? (
+                        <View style={styles.errorContainer}>
+                            <Text style={styles.errorText}>{servicesError}</Text>
+                        </View>
+                    ) : (
+                        <View style={styles.popularList}>
+                            {popularServices.slice(0, 5).map((service) => (
+                                <PopularServiceCard
+                                    key={service.id}
+                                    service={service}
+                                    onPress={handlePopularServicePress}
+                                    onBookmarkPress={handlePopularServiceBookmark}
+                                />
+                            ))}
+                        </View>
+                    )}
                 </View>
             </ScrollView>
             <StatusBar style="auto" />
@@ -230,5 +252,20 @@ const styles = StyleSheet.create({
     },
     popularList: {
         gap: 16,
+    },
+    loadingContainer: {
+        paddingVertical: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    errorContainer: {
+        paddingVertical: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    errorText: {
+        color: Theme.colors.error,
+        fontSize: 14,
+        textAlign: 'center',
     },
 });
