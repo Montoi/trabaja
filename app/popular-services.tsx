@@ -33,17 +33,12 @@ export default function PopularServicesScreen() {
         const service = services.find(s => s.id === id);
         if (service) {
             router.push({
-                pathname: '/service-details',
+                pathname: `/service-detail/${id}`,
                 params: {
-                    id: service.id,
                     title: service.title,
                     provider: service.provider,
                     category: service.category,
-                    price: service.price.toString(),
-                    rating: service.rating.toString(),
-                    reviewCount: service.reviewCount.toString(),
                     image: service.image,
-                    isBookmarked: service.isBookmarked.toString(),
                 }
             });
         }
