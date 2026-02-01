@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { memo } from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface SectionHeaderProps {
     title: string;
@@ -12,12 +13,14 @@ export const SectionHeader = memo(function SectionHeader({
     onSeeAllPress,
     showSeeAll = true,
 }: SectionHeaderProps) {
+    const { t } = useLanguage();
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>{title}</Text>
             {showSeeAll && onSeeAllPress && (
                 <Pressable onPress={onSeeAllPress}>
-                    <Text style={styles.seeAll}>See All</Text>
+                    <Text style={styles.seeAll}>{t.home.viewAll}</Text>
                 </Pressable>
             )}
         </View>

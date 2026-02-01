@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import type { Service } from '../../types/home';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface ServiceIconProps {
     service: Service;
@@ -9,14 +10,21 @@ interface ServiceIconProps {
 }
 
 export const ServiceIcon = memo(function ServiceIcon({ service, onPress }: ServiceIconProps) {
+    const { t } = useLanguage();
     const handlePress = () => onPress(service.id);
+
+    // Map service names to translation keys
+    const getTranslatedName = (name: string) => {
+        const key = name.toLowerCase() as keyof typeof t.home.categories;
+        return t.home.categories[key] || name;
+    };
 
     return (
         <Pressable onPress={handlePress} style={styles.container}>
             <View style={[styles.iconContainer, { backgroundColor: service.bgColor }]}>
                 <Ionicons name={service.icon as any} size={28} color={service.iconColor} />
             </View>
-            <Text style={styles.label}>{service.name}</Text>
+            <Text style={styles.label}>{getTranslatedName(service.name)}</Text>
         </Pressable>
     );
 });

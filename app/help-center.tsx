@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
 import { Theme } from '../constants/Theme';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface FAQItem {
     question: string;
@@ -78,6 +79,7 @@ const HelpCategory: React.FC<HelpCategoryProps> = ({ icon, title, description, c
 export default function HelpCenterScreen() {
     const insets = useSafeAreaInsets();
     const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+    const { t } = useLanguage();
 
     const handleToggleFAQ = useCallback((index: number) => {
         setExpandedFAQ(prev => prev === index ? null : index);
@@ -147,7 +149,7 @@ export default function HelpCenterScreen() {
                     <Pressable onPress={() => router.back()} style={styles.backButton}>
                         <Ionicons name="arrow-back" size={24} color={Theme.colors.textPrimary} />
                     </Pressable>
-                    <Text style={styles.headerTitle}>Help Center</Text>
+                    <Text style={styles.headerTitle}>{t.helpCenter.title}</Text>
                     <View style={styles.headerSpacer} />
                 </View>
             </View>
@@ -164,7 +166,7 @@ export default function HelpCenterScreen() {
                     <View style={styles.heroIcon}>
                         <Ionicons name="help-circle" size={48} color={Theme.colors.primary} />
                     </View>
-                    <Text style={styles.heroTitle}>How can we help you?</Text>
+                    <Text style={styles.heroTitle}>{t.helpCenter.subtitle}</Text>
                     <Text style={styles.heroSubtitle}>
                         Find answers to common questions or contact our support team
                     </Text>
@@ -172,7 +174,7 @@ export default function HelpCenterScreen() {
 
                 {/* Categories */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Browse by Category</Text>
+                    <Text style={styles.sectionTitle}>{t.helpCenter.browseCategories}</Text>
                     <View style={styles.categoriesGrid}>
                         {categories.map((category, index) => (
                             <HelpCategory
@@ -186,7 +188,7 @@ export default function HelpCenterScreen() {
 
                 {/* FAQs */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
+                    <Text style={styles.sectionTitle}>{t.helpCenter.faqs}</Text>
                     <View style={styles.faqList}>
                         {faqs.map((faq, index) => (
                             <FAQItem
@@ -215,7 +217,7 @@ export default function HelpCenterScreen() {
                             ]}
                         >
                             <Ionicons name="chatbubble-ellipses" size={20} color={Theme.colors.white} />
-                            <Text style={styles.contactButtonTextPrimary}>Live Chat</Text>
+                            <Text style={styles.contactButtonTextPrimary}>{t.helpCenter.liveChat}</Text>
                         </Pressable>
 
                         <Pressable
@@ -226,7 +228,7 @@ export default function HelpCenterScreen() {
                             ]}
                         >
                             <Ionicons name="mail" size={20} color={Theme.colors.primary} />
-                            <Text style={styles.contactButtonTextSecondary}>Email Us</Text>
+                            <Text style={styles.contactButtonTextSecondary}>{t.helpCenter.emailUs}</Text>
                         </Pressable>
                     </View>
                 </View>

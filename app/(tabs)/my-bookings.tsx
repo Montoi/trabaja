@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
 import { Theme } from '../../constants/Theme';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 type BookingStatus = 'upcoming' | 'completed' | 'cancelled';
 
@@ -38,25 +39,27 @@ const BookingCard: React.FC<BookingCardProps> = ({
     onToggleExpand,
     onChatPress
 }) => {
+    const { t } = useLanguage();
+
     const getStatusConfig = () => {
         switch (booking.status) {
             case 'upcoming':
                 return {
                     bg: Theme.colors.primaryLight,
                     text: Theme.colors.primary,
-                    label: 'Upcoming'
+                    label: t.bookings.upcoming
                 };
             case 'completed':
                 return {
                     bg: Theme.colors.successLight,
                     text: Theme.colors.success,
-                    label: 'Completed'
+                    label: t.bookings.completed
                 };
             case 'cancelled':
                 return {
                     bg: Theme.colors.errorLight,
                     text: Theme.colors.error,
-                    label: 'Cancelled'
+                    label: t.bookings.cancelled
                 };
         }
     };
@@ -136,6 +139,7 @@ export default function MyBookingsScreen() {
     const insets = useSafeAreaInsets();
     const [activeTab, setActiveTab] = useState<BookingStatus>('upcoming');
     const [expandedId, setExpandedId] = useState<string | null>(null);
+    const { t } = useLanguage();
 
     const handleToggleExpand = useCallback((id: string) => {
         setExpandedId(prev => prev === id ? null : id);
@@ -212,7 +216,7 @@ export default function MyBookingsScreen() {
                         <View style={styles.logoBadge}>
                             <Text style={styles.logoText}>h</Text>
                         </View>
-                        <Text style={styles.toolbarTitle}>My Bookings</Text>
+                        <Text style={styles.toolbarTitle}>{t.bookings.title}</Text>
                     </View>
                     <View style={styles.toolbarRight}>
                         <Pressable style={styles.iconButton}>
@@ -235,7 +239,7 @@ export default function MyBookingsScreen() {
                         styles.tabText,
                         activeTab === 'upcoming' && styles.tabTextActive
                     ]}>
-                        Upcoming
+                        {t.bookings.upcoming}
                     </Text>
                     {activeTab === 'upcoming' && <View style={styles.tabIndicator} />}
                 </Pressable>
@@ -248,7 +252,7 @@ export default function MyBookingsScreen() {
                         styles.tabText,
                         activeTab === 'completed' && styles.tabTextActive
                     ]}>
-                        Completed
+                        {t.bookings.completed}
                     </Text>
                     {activeTab === 'completed' && <View style={styles.tabIndicator} />}
                 </Pressable>
@@ -261,7 +265,7 @@ export default function MyBookingsScreen() {
                         styles.tabText,
                         activeTab === 'cancelled' && styles.tabTextActive
                     ]}>
-                        Cancelled
+                        {t.bookings.cancelled}
                     </Text>
                     {activeTab === 'cancelled' && <View style={styles.tabIndicator} />}
                 </Pressable>

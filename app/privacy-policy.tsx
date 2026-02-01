@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
 import { Theme } from '../constants/Theme';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface PolicySectionProps {
     title: string;
@@ -28,6 +29,7 @@ const PolicySection: React.FC<PolicySectionProps> = ({ title, content }) => {
 
 export default function PrivacyPolicyScreen() {
     const insets = useSafeAreaInsets();
+    const { t } = useLanguage();
 
     const sections = [
         {
@@ -78,7 +80,7 @@ export default function PrivacyPolicyScreen() {
                     <Pressable onPress={() => router.back()} style={styles.backButton}>
                         <Ionicons name="arrow-back" size={24} color={Theme.colors.textPrimary} />
                     </Pressable>
-                    <Text style={styles.headerTitle}>Privacy Policy</Text>
+                    <Text style={styles.headerTitle}>{t.privacyPolicy.title}</Text>
                     <View style={styles.headerSpacer} />
                 </View>
             </View>

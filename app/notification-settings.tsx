@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
 import { Theme } from '../constants/Theme';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface NotificationSettingProps {
     title: string;
@@ -43,6 +44,7 @@ const NotificationSetting: React.FC<NotificationSettingProps> = ({
 
 export default function NotificationSettingsScreen() {
     const insets = useSafeAreaInsets();
+    const { t } = useLanguage();
 
     // Notification settings state
     const [generalNotification, setGeneralNotification] = useState(true);
@@ -92,7 +94,7 @@ export default function NotificationSettingsScreen() {
                     <Pressable onPress={() => router.back()} style={styles.backButton}>
                         <Ionicons name="arrow-back" size={24} color={Theme.colors.textPrimary} />
                     </Pressable>
-                    <Text style={styles.headerTitle}>Notification</Text>
+                    <Text style={styles.headerTitle}>{t.notifications.title}</Text>
                     <View style={{ width: 40 }} />
                 </View>
             </View>
@@ -107,61 +109,61 @@ export default function NotificationSettingsScreen() {
                 {/* Settings List */}
                 <View style={styles.settingsList}>
                     <NotificationSetting
-                        title="General Notification"
+                        title={t.notifications.generalNotification}
                         enabled={generalNotification}
                         onToggle={setGeneralNotification}
                     />
 
                     <NotificationSetting
-                        title="Sound"
+                        title={t.notifications.sound}
                         enabled={sound}
                         onToggle={setSound}
                     />
 
                     <NotificationSetting
-                        title="Vibrate"
+                        title={t.notifications.vibrate}
                         enabled={vibrate}
                         onToggle={setVibrate}
                     />
 
                     <NotificationSetting
-                        title="Special Offers"
+                        title={t.notifications.specialOffers}
                         enabled={specialOffers}
                         onToggle={setSpecialOffers}
                     />
 
                     <NotificationSetting
-                        title="Promo & Discount"
+                        title={t.notifications.promoDiscount}
                         enabled={promoDiscount}
                         onToggle={setPromoDiscount}
                     />
 
                     <NotificationSetting
-                        title="Payments"
+                        title={t.notifications.payments}
                         enabled={payments}
                         onToggle={setPayments}
                     />
 
                     <NotificationSetting
-                        title="Cashback"
+                        title={t.notifications.cashback}
                         enabled={cashback}
                         onToggle={setCashback}
                     />
 
                     <NotificationSetting
-                        title="App Updates"
+                        title={t.notifications.appUpdates}
                         enabled={appUpdates}
                         onToggle={setAppUpdates}
                     />
 
                     <NotificationSetting
-                        title="New Service Available"
+                        title={t.notifications.newService}
                         enabled={newService}
                         onToggle={setNewService}
                     />
 
                     <NotificationSetting
-                        title="New Tips Available"
+                        title={t.notifications.newTips}
                         enabled={newTips}
                         onToggle={setNewTips}
                     />

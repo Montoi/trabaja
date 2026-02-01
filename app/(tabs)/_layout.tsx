@@ -10,8 +10,11 @@ import Animated, {
     interpolateColor,
     useAnimatedProps
 } from 'react-native-reanimated';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function TabLayout() {
+    const { t } = useLanguage();
+
     return (
         <Tabs
             screenOptions={{
@@ -23,28 +26,28 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: 'Home',
+                    title: t.tabs.home,
                     headerTitle: 'Inicio',
                 }}
             />
             <Tabs.Screen
                 name="my-bookings"
                 options={{
-                    title: 'Bookings',
+                    title: t.tabs.bookings,
                     headerTitle: 'My Bookings',
                 }}
             />
             <Tabs.Screen
                 name="stats"
                 options={{
-                    title: 'Estadísticas',
+                    title: t.tabs.stats,
                     headerTitle: 'Estadísticas',
                 }}
             />
             <Tabs.Screen
                 name="profile"
                 options={{
-                    title: 'Perfil',
+                    title: t.tabs.profile,
                     headerTitle: 'Configuración de Perfil',
                 }}
             />

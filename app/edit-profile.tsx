@@ -15,6 +15,7 @@ import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
 import { Theme } from '../constants/Theme';
 import { USER_DATA } from '../constants/MockData';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface FormInputProps {
     placeholder: string;
@@ -91,6 +92,7 @@ const PickerInput: React.FC<PickerInputProps> = ({ placeholder, value, onPress }
 
 export default function EditProfileScreen() {
     const insets = useSafeAreaInsets();
+    const { t } = useLanguage();
 
     // Form state
     const [fullName, setFullName] = useState('Andrew Ainsley');
@@ -141,7 +143,7 @@ export default function EditProfileScreen() {
                     <Pressable onPress={() => router.back()} style={styles.backButton}>
                         <Ionicons name="arrow-back" size={24} color={Theme.colors.textPrimary} />
                     </Pressable>
-                    <Text style={styles.headerTitle}>Edit Profile</Text>
+                    <Text style={styles.headerTitle}>{t.editProfile.title}</Text>
                     <View style={{ width: 40 }} />
                 </View>
             </View>
@@ -170,13 +172,13 @@ export default function EditProfileScreen() {
                 {/* Form Fields */}
                 <View style={styles.form}>
                     <FormInput
-                        placeholder="Full Name"
+                        placeholder={t.editProfile.fullName}
                         value={fullName}
                         onChangeText={setFullName}
                     />
 
                     <FormInput
-                        placeholder="Nickname"
+                        placeholder={t.editProfile.nickname}
                         value={nickname}
                         onChangeText={setNickname}
                     />
@@ -198,7 +200,7 @@ export default function EditProfileScreen() {
                     </Pressable>
 
                     <FormInput
-                        placeholder="Email"
+                        placeholder={t.editProfile.email}
                         value={email}
                         onChangeText={setEmail}
                         icon="mail-outline"
@@ -206,13 +208,13 @@ export default function EditProfileScreen() {
                     />
 
                     <PickerInput
-                        placeholder="Country"
+                        placeholder={t.editProfile.country}
                         value={country}
                         onPress={handleSelectCountry}
                     />
 
                     <FormInput
-                        placeholder="Phone Number"
+                        placeholder={t.editProfile.phoneNumber}
                         value={phoneNumber}
                         onChangeText={setPhoneNumber}
                         icon="call-outline"
@@ -220,13 +222,13 @@ export default function EditProfileScreen() {
                     />
 
                     <PickerInput
-                        placeholder="Gender"
+                        placeholder={t.editProfile.gender}
                         value={gender}
                         onPress={handleSelectGender}
                     />
 
                     <FormInput
-                        placeholder="Street Address"
+                        placeholder={t.editProfile.address}
                         value={address}
                         onChangeText={setAddress}
                         multiline
@@ -249,7 +251,7 @@ export default function EditProfileScreen() {
                         pressed && styles.updateButtonPressed,
                     ]}
                 >
-                    <Text style={styles.updateButtonText}>Update</Text>
+                    <Text style={styles.updateButtonText}>{t.editProfile.update}</Text>
                 </Pressable>
             </View>
         </View>

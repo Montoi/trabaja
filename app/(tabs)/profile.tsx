@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
 import { Theme } from '../../constants/Theme';
 import { USER_DATA } from '../../constants/MockData';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface MenuItemProps {
     icon: keyof typeof Ionicons.glyphMap | keyof typeof MaterialIcons.glyphMap;
@@ -70,6 +71,9 @@ const MenuItem: React.FC<MenuItemProps> = ({
 export default function ProfileScreen() {
     const insets = useSafeAreaInsets();
     const [isDarkMode, setIsDarkMode] = useState(false);
+    const { language, t } = useLanguage();
+
+    const languageLabel = language === 'en' ? 'English (US)' : 'Español';
 
     const handleEditProfile = useCallback(() => router.push('/edit-profile'), []);
     const handleLogout = useCallback(() => console.log('Logout'), []);
@@ -84,7 +88,7 @@ export default function ProfileScreen() {
                     <View style={styles.logoBadge}>
                         <Text style={styles.logoText}>h</Text>
                     </View>
-                    <Text style={styles.toolbarTitle}>Profile</Text>
+                    <Text style={styles.toolbarTitle}>{t.profile.title}</Text>
                     <Pressable style={styles.optionsBtn}>
                         <Ionicons name="ellipsis-horizontal" size={24} color={Theme.colors.textPrimary} />
                     </Pressable>
@@ -115,30 +119,30 @@ export default function ProfileScreen() {
 
                 {/* Menu List */}
                 <View style={styles.menuList}>
-                    <MenuItem icon="person-outline" title="Edit Profile" onPress={() => router.push('/edit-profile')} />
-                    <MenuItem icon="notifications-outline" title="Notification" onPress={() => router.push('/notification-settings')} />
-                    <MenuItem icon="wallet-outline" title="Payment" onPress={() => router.push('/payment-methods')} />
-                    <MenuItem icon="shield-checkmark-outline" title="Security" onPress={() => router.push('/security')} />
+                    <MenuItem icon="person-outline" title={t.profile.editProfile} onPress={() => router.push('/edit-profile')} />
+                    <MenuItem icon="notifications-outline" title={t.profile.notification} onPress={() => router.push('/notification-settings')} />
+                    <MenuItem icon="wallet-outline" title={t.profile.payment} onPress={() => router.push('/payment-methods')} />
+                    <MenuItem icon="shield-checkmark-outline" title={t.profile.security} onPress={() => router.push('/security')} />
                     <MenuItem
                         icon="language-outline"
-                        title="Language"
-                        value="English (US)"
+                        title={t.profile.language}
+                        value={languageLabel}
                         onPress={() => router.push('/language')}
                     />
                     <MenuItem
                         icon="eye-outline"
-                        title="Dark Mode"
+                        title={t.profile.darkMode}
                         onPress={() => { }}
                         hasSwitch
                         switchValue={isDarkMode}
                         onSwitchChange={setIsDarkMode}
                     />
-                    <MenuItem icon="lock-closed-outline" title="Privacy Policy" onPress={() => router.push('/privacy-policy')} />
-                    <MenuItem icon="help-circle-outline" title="Help Center" onPress={() => router.push('/help-center')} />
-                    <MenuItem icon="people-outline" title="Invite Friends" onPress={() => { }} />
+                    <MenuItem icon="lock-closed-outline" title={t.profile.privacyPolicy} onPress={() => router.push('/privacy-policy')} />
+                    <MenuItem icon="help-circle-outline" title={t.profile.helpCenter} onPress={() => router.push('/help-center')} />
+                    <MenuItem icon="people-outline" title={t.profile.inviteFriends} onPress={() => { }} />
                     <MenuItem
                         icon="log-out-outline"
-                        title="Logout"
+                        title={t.profile.logout}
                         onPress={handleLogout}
                         isDestructive
                     />

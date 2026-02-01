@@ -21,6 +21,7 @@ import type { User, SpecialOffer, Service, PopularService } from '../../types/ho
 import { Theme } from '../../constants/Theme';
 import { USER_DATA, SPECIAL_OFFERS, SERVICES } from '../../constants/MockData';
 import { usePopularServices, useToggleBookmark } from '../../hooks/useServices';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const BANNER_WIDTH = SCREEN_WIDTH - 48; // SCREEN_WIDTH - (paddingHorizontal * 2)
@@ -36,6 +37,7 @@ const ITEM_WIDTH = (SCREEN_WIDTH - (GRID_PADDING * 2) - (COLUMN_GAP * 3)) / 4;
 export default function HomeScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const insets = useSafeAreaInsets();
+    const { t } = useLanguage();
 
     // Fetch popular services from API
     const { data: popularServices, loading: servicesLoading, error: servicesError, refetch } = usePopularServices();
@@ -125,14 +127,14 @@ export default function HomeScreen() {
                         value={searchQuery}
                         onChangeText={setSearchQuery}
                         onFilterPress={handleFilterPress}
-                        placeholder="Search"
+                        placeholder={t.common.search}
                     />
                 </View>
 
                 {/* Special Offers */}
                 <View style={styles.section}>
                     <SectionHeader
-                        title="Special Offers"
+                        title={t.home.specialOffers}
                         onSeeAllPress={handleSeeAllOffers}
                     />
                     <ScrollView
@@ -160,7 +162,7 @@ export default function HomeScreen() {
                 {/* Services Grid */}
                 <View style={styles.section}>
                     <SectionHeader
-                        title="Services"
+                        title={t.home.services}
                         onSeeAllPress={handleSeeAllServices}
                     />
                     <View style={styles.servicesGrid}>
@@ -185,7 +187,7 @@ export default function HomeScreen() {
                 {/* Most Popular Services */}
                 <View style={styles.section}>
                     <SectionHeader
-                        title="Most Popular Services"
+                        title={t.home.popularServices}
                         onSeeAllPress={handleSeeAllPopular}
                     />
                     {servicesLoading ? (

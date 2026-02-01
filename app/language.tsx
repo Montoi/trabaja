@@ -11,9 +11,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
 import { Theme } from '../constants/Theme';
+import { useLanguage } from '../contexts/LanguageContext';
+import type { Language as LanguageCode } from '../constants/translations';
 
 interface Language {
-    code: string;
+    code: LanguageCode;
     name: string;
     nativeName: string;
     flag: string;
@@ -53,29 +55,16 @@ const LanguageItem: React.FC<LanguageItemProps> = ({ language, isSelected, onSel
 
 export default function LanguageScreen() {
     const insets = useSafeAreaInsets();
+    const { language: currentLanguage, setLanguage, t } = useLanguage();
 
     const languages: Language[] = [
-        { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
+        { code: 'en', name: 'English', nativeName: 'English (US)', flag: '🇺🇸' },
         { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
-        { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷' },
-        { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
-        { code: 'it', name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹' },
-        { code: 'pt', name: 'Portuguese', nativeName: 'Português', flag: '🇵🇹' },
-        { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
-        { code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
-        { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
-        { code: 'ko', name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
-        { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
-        { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳' },
     ];
 
-    const [selectedLanguage, setSelectedLanguage] = useState('en');
-
-    const handleSelectLanguage = useCallback((code: string) => {
-        setSelectedLanguage(code);
-        console.log('Selected language:', code);
-        // TODO: Update app language
-    }, []);
+    const handleSelectLanguage = useCallback(async (code: LanguageCode) => {
+        await setLanguage(code);
+    }, [setLanguage]);
 
     return (
         <View style={styles.container}>
@@ -87,7 +76,7 @@ export default function LanguageScreen() {
                     <Pressable onPress={() => router.back()} style={styles.backButton}>
                         <Ionicons name="arrow-back" size={24} color={Theme.colors.textPrimary} />
                     </Pressable>
-                    <Text style={styles.headerTitle}>Language</Text>
+                    <Text style={styles.headerTitle}>{t.language.title}</Text>
                     <View style={styles.headerSpacer} />
                 </View>
             </View>
@@ -105,7 +94,7 @@ export default function LanguageScreen() {
                         <LanguageItem
                             key={language.code}
                             language={language}
-                            isSelected={selectedLanguage === language.code}
+                            isSelected={currentLanguage === language.code}
                             onSelect={() => handleSelectLanguage(language.code)}
                         />
                     ))}

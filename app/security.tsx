@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
 import { Theme } from '../constants/Theme';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface SecuritySettingProps {
     icon: keyof typeof Ionicons.glyphMap;
@@ -72,6 +73,7 @@ const SecuritySetting: React.FC<SecuritySettingProps> = ({
 
 export default function SecurityScreen() {
     const insets = useSafeAreaInsets();
+    const { t } = useLanguage();
 
     // Security settings state
     const [rememberMe, setRememberMe] = useState(true);
@@ -105,7 +107,7 @@ export default function SecurityScreen() {
                     <Pressable onPress={() => router.back()} style={styles.backButton}>
                         <Ionicons name="arrow-back" size={24} color={Theme.colors.textPrimary} />
                     </Pressable>
-                    <Text style={styles.headerTitle}>Security</Text>
+                    <Text style={styles.headerTitle}>{t.security.title}</Text>
                     <View style={styles.headerSpacer} />
                 </View>
             </View>
@@ -123,12 +125,12 @@ export default function SecurityScreen() {
                     <View style={styles.settingsList}>
                         <SecuritySetting
                             icon="lock-closed-outline"
-                            title="Change Password"
+                            title={t.security.changePassword}
                             onPress={handleChangePassword}
                         />
                         <SecuritySetting
                             icon="keypad-outline"
-                            title="Change PIN"
+                            title={t.security.changePin}
                             onPress={handleChangePIN}
                         />
                     </View>
@@ -140,14 +142,14 @@ export default function SecurityScreen() {
                     <View style={styles.settingsList}>
                         <SecuritySetting
                             icon="finger-print-outline"
-                            title="Face ID"
+                            title={t.security.faceId}
                             hasSwitch
                             switchValue={faceId}
                             onSwitchChange={setFaceId}
                         />
                         <SecuritySetting
                             icon="scan-outline"
-                            title="Biometric ID"
+                            title={t.security.biometricId}
                             hasSwitch
                             switchValue={biometricId}
                             onSwitchChange={setBiometricId}
