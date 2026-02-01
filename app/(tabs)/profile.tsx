@@ -123,7 +123,7 @@ export default function ProfileScreen() {
                         icon="language-outline"
                         title="Language"
                         value="English (US)"
-                        onPress={() => { }}
+                        onPress={() => router.push('/language')}
                     />
                     <MenuItem
                         icon="eye-outline"
