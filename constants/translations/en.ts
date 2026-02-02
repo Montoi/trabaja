@@ -13,7 +13,7 @@ export const en = {
     tabs: {
         home: 'Home',
         bookings: 'Bookings',
-        stats: 'Statistics',
+        referrals: 'Referrals',
         profile: 'Profile',
     },
     home: {

@@ -15,7 +15,7 @@ export const es: TranslationKeys = {
     tabs: {
         home: 'Inicio',
         bookings: 'Reservas',
-        stats: 'Estadísticas',
+        referrals: 'Referidos',
         profile: 'Perfil',
     },
     home: {

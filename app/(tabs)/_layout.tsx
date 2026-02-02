@@ -16,13 +16,13 @@ import { Theme } from '../../constants/Theme';
 // Import screens directly
 import HomeScreen from './index';
 import MyBookingsScreen from './my-bookings';
-import StatsScreen from './stats';
+import ReferralsScreen from './referrals';
 import ProfileScreen from './profile';
 
 const TAB_CONFIG = [
     { name: 'index', title: 'home', icon: 'home', component: HomeScreen },
     { name: 'my-bookings', title: 'bookings', icon: 'calendar', component: MyBookingsScreen },
-    { name: 'stats', title: 'stats', icon: 'stats-chart', component: StatsScreen },
+    { name: 'referrals', title: 'referrals', icon: 'people', component: ReferralsScreen },
     { name: 'profile', title: 'profile', icon: 'person', component: ProfileScreen },
 ] as const;
 
