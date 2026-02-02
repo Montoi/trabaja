@@ -55,7 +55,11 @@ export default function RootLayout() {
     return (
         <SafeAreaProvider>
             <LanguageProvider>
-                <Stack screenOptions={{ headerShown: false }}>
+                <Stack
+                    screenOptions={{ headerShown: false }}
+                    initialRouteName="(auth)"
+                >
+                    <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 </Stack>
             </LanguageProvider>

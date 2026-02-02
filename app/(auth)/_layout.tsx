@@ -7,7 +7,9 @@ export default function AuthLayout() {
                 headerShown: false,
                 contentStyle: { backgroundColor: '#FFFFFF' },
             }}
+            initialRouteName="onboarding"
         >
+            <Stack.Screen name="onboarding" />
             <Stack.Screen name="welcome" />
             <Stack.Screen name="sign-up" />
             <Stack.Screen name="login" />
