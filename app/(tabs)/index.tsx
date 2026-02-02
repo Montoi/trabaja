@@ -5,6 +5,7 @@ import {
     Dimensions,
     Text,
     ActivityIndicator,
+    Pressable,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useState, useCallback } from 'react';
@@ -120,6 +121,21 @@ export default function HomeScreen() {
                     onNotificationPress={handleNotificationPress}
                     onBookmarkPress={handleBookmarkPress}
                 />
+
+                {/* Temporary Trigger for Splash Screen */}
+                <Pressable
+                    onPress={() => router.push('/test-splash')}
+                    style={{
+                        marginHorizontal: 24,
+                        marginTop: 10,
+                        padding: 10,
+                        backgroundColor: Theme.colors.primary,
+                        borderRadius: 8,
+                        alignItems: 'center'
+                    }}
+                >
+                    <Text style={{ color: 'white', fontWeight: 'bold' }}>Test Splash Animation 🎨</Text>
+                </Pressable>
 
                 {/* Search Bar */}
                 <View style={styles.searchContainer}>
