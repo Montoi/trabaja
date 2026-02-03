@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Pressable, Animated, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Animated, Dimensions, Image } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -13,6 +13,7 @@ interface OnboardingPage {
     title: string;
     description: string;
     gradientColors: readonly [string, string];
+    imageUrl: string;
 }
 
 const PAGES: OnboardingPage[] = [
@@ -21,29 +22,35 @@ const PAGES: OnboardingPage[] = [
         icon2: 'cleaning-services',
         title: 'Find trusted professionals',
         description: 'Browse vetted service providers in your area',
-        gradientColors: [Theme.colors.primary + '20', Theme.colors.primary + '05'] as const
+        gradientColors: [Theme.colors.primary + '20', Theme.colors.primary + '05'] as const,
+        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAP2cY3nPiZTYvo1y82jfon1DmrE96A4LXeYKqv7oJY7cJGMEoYyuBZi26e57ON3hHXxY7e_baV6x86jcgexdwt5zoewF06zijouuSdeOvFedmvkAu1qEEA_BdoS2R577V-x35VBpYYv46WKyTuGEU5kIC_MdUqB30xjZ6rSxazQefMNNZzqdPPNLDjMve9ZSZLPOFo2nsHqCXjGVHw8tCMP3Cf4wStFrIDsUKuwdF28h5Z7CIJ_0XP9bjgz7aXLMJSjA8h4l3ptA6G'
     },
     {
         icon1: 'build',
         icon2: 'handyman',
         title: 'Book services instantly',
         description: 'Schedule appointments in just a few taps',
-        gradientColors: [Theme.colors.iconOrange + '20', Theme.colors.iconOrange + '05'] as const
+        gradientColors: [Theme.colors.iconOrange + '20', Theme.colors.iconOrange + '05'] as const,
+        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAqCNbisSmHzqjAU4RIYNGzTDPzfSWc3TeE0ZUitZ61HQhs5DPBACZ4A9_vhffxvEE4-24aAMr97907FUzd8C0heKgLGl33MvWo6aFy2_HcVBFwYD5xXyLOVH7ewtVb2B1LfZks1P77RqOpBazBIGntIxtcSGH0WBB-h53Tvcq-ZvFNxg4kGJwmDWQ9JKq_eWTaOmR9tjdpXS9yoTLO6BpjcQmp97fxhaiCTxiqPzJtcx4k3EtbPqxQDLSc8QLJiGer_RlQnV1TLEc3'
     },
     {
         icon1: 'star',
         icon2: 'favorite',
         title: 'Rate and review',
         description: 'Share your experience and help others find the best',
-        gradientColors: [Theme.colors.iconGreen + '20', Theme.colors.iconGreen + '05'] as const
+        gradientColors: [Theme.colors.iconGreen + '20', Theme.colors.iconGreen + '05'] as const,
+        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDaSJk_NFKkpNGs1-7JaNN41IW9S47Ij2FGwMhVT59SbiKsq7GWNtSnQDXhbDQ7M4pJq3Lpx2nKCbBgQuMv-Xy9JZXvSLKE1BDku52VWiUjZ16I6GI6SYTa-tV3hKSRtWMB4FgBdVnkXXncEn24Ju6FeQVylbOp4tkbbSfC8hah94vTtPyL7gYGZZft17_H6SWOGI2BVZ42c9dBmcZIaOL8t8YBSwDio5iLg0p693InXrjdZdZ4T4i9ZPmSkzbP6ubmMbqYR2aCPPlc'
     }
 ];
 
 export default function OnboardingScreen() {
     const [currentPage, setCurrentPage] = useState(0);
+    const [imageError, setImageError] = useState(false);
     const fadeAnim = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
+        // Reset image error state when page changes
+        setImageError(false);
         // Fade out then fade in when page changes
         fadeAnim.setValue(0);
         Animated.timing(fadeAnim, {
@@ -79,11 +86,20 @@ export default function OnboardingScreen() {
                 <View style={[styles.circleLarge, { backgroundColor: Theme.colors.primary + '20' }]} />
                 <View style={[styles.circleSmall, { backgroundColor: Theme.colors.primary + '30' }]} />
 
-                {/* Placeholder for Image - Using colored box for now */}
+                {/* Image Container */}
                 <View style={styles.imageContainer}>
-                    <View style={[styles.imagePlaceholder, { backgroundColor: Theme.colors.primary }]}>
-                        <MaterialIcons name="home-repair-service" size={64} color="white" />
-                    </View>
+                    {!imageError ? (
+                        <Image
+                            source={{ uri: pageData.imageUrl }}
+                            style={styles.image}
+                            resizeMode="cover"
+                            onError={() => setImageError(true)}
+                        />
+                    ) : (
+                        <View style={[styles.imagePlaceholder, { backgroundColor: Theme.colors.primary }]}>
+                            <MaterialIcons name="home-repair-service" size={64} color="white" />
+                        </View>
+                    )}
                 </View>
 
                 {/* Floating Badges */}
@@ -182,6 +198,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    image: {
+        width: '100%',
+        height: '100%',
     },
     badge: {
         position: 'absolute',
