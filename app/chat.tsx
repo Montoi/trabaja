@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Platform, Modal, ScrollView, ActivityIndicator, TouchableOpacity, useWindowDimensions } from 'react-native';
 import Animated, { FadeInUp, FadeOut } from 'react-native-reanimated';
-import ImageViewing from 'react-native-image-viewing';
+import ImageViewerModal from '../components/ImageViewerModal';
 import { FlashList, type FlashListProps } from '@shopify/flash-list';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -389,13 +389,11 @@ export default function ChatScreen() {
             </Modal>
 
             {/* Fullscreen Image Viewer with Zoom */}
-            <ImageViewing
+            <ImageViewerModal
                 images={viewerImages}
-                imageIndex={viewerIndex}
+                initialIndex={viewerIndex}
                 visible={isViewerVisible}
-                onRequestClose={() => setIsViewerVisible(false)}
-                swipeToCloseEnabled={true}
-                doubleTapToZoomEnabled={true}
+                onClose={() => setIsViewerVisible(false)}
             />
         </KeyboardAvoidingView>
     );
