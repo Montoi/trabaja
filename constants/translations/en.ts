@@ -62,6 +62,14 @@ export const en = {
         delete: 'Delete',
         confirmDelete: 'Are you sure you want to delete this service?',
     },
+    chat: {
+        title: 'Chat',
+        typeMessage: 'Type a message...',
+        today: 'Today',
+        yesterday: 'Yesterday',
+        typing: 'typing...',
+        send: 'Send',
+    },
     profile: {
         title: 'Profile',
         editProfile: 'Edit Profile',

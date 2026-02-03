@@ -286,7 +286,14 @@ export default function MyBookingsScreen() {
                             booking={booking}
                             isExpanded={expandedId === booking.id}
                             onToggleExpand={() => handleToggleExpand(booking.id)}
-                            onChatPress={() => console.log('Chat with', booking.providerName)}
+                            onChatPress={() => router.push({
+                                pathname: '/chat',
+                                params: {
+                                    bookingId: booking.id,
+                                    provider: booking.providerName,
+                                    providerImage: booking.providerImage,
+                                }
+                            })}
                         />
                     ))
                 ) : (

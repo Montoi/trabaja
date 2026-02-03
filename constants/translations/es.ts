@@ -61,6 +61,14 @@ export const es: TranslationKeys = {
         delete: 'Eliminar',
         confirmDelete: '¿Estás seguro de eliminar este servicio?',
     },
+    chat: {
+        title: 'Chat',
+        typeMessage: 'Escribe un mensaje...',
+        today: 'Hoy',
+        yesterday: 'Ayer',
+        typing: 'escribiendo...',
+        send: 'Enviar',
+    },
     profile: {
         title: 'Perfil',
         editProfile: 'Editar Perfil',
