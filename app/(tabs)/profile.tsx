@@ -117,6 +117,30 @@ export default function ProfileScreen() {
 
                 <View style={styles.divider} />
 
+                {/* Worker Section - only show for worker role */}
+                {USER_DATA.role === 'worker' && (
+                    <>
+                        <View style={styles.sectionHeader}>
+                            <MaterialIcons name="work" size={20} color={Theme.colors.primary} />
+                            <Text style={styles.sectionTitle}>{t.profile.workerSection}</Text>
+                        </View>
+                        <View style={styles.menuList}>
+                            <MenuItem
+                                icon="briefcase-outline"
+                                title={t.profile.myServices}
+                                onPress={() => router.push('/my-services')}
+                            />
+                            <MenuItem
+                                icon="add-circle"
+                                iconType="MaterialIcons"
+                                title={t.profile.createService}
+                                onPress={() => router.push('/create-service')}
+                            />
+                        </View>
+                        <View style={styles.divider} />
+                    </>
+                )}
+
                 {/* Menu List */}
                 <View style={styles.menuList}>
                     <MenuItem icon="person-outline" title={t.profile.editProfile} onPress={() => router.push('/edit-profile')} />
@@ -241,8 +265,20 @@ const styles = StyleSheet.create({
     },
     divider: {
         height: 1,
-        backgroundColor: Theme.colors.border,
-        marginBottom: 8,
+        backgroundColor: Theme.colors.divider,
+        marginVertical: 16,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+        paddingHorizontal: 4,
+    },
+    sectionTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: Theme.colors.textPrimary,
+        marginLeft: 8,
     },
     menuList: {
         paddingBottom: 20,

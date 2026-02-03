@@ -4,6 +4,7 @@ export const USER_DATA: User = {
     name: 'Andrew Ainsley',
     avatar: 'https://i.pravatar.cc/150?img=12',
     greeting: 'Good Morning',
+    role: 'worker', // 'user' or 'worker'
 };
 
 export const SPECIAL_OFFERS: SpecialOffer[] = [

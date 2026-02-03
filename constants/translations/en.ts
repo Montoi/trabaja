@@ -33,6 +33,35 @@ export const en = {
             more: 'More',
         },
     },
+    createService: {
+        title: 'Create Service',
+        publish: 'Publish',
+        // Form Labels
+        serviceTitle: 'Service Title',
+        serviceTitlePlaceholder: 'e.g., Professional House Cleaning',
+        category: 'Category',
+        selectCategory: 'Select a category',
+        description: 'Description',
+        descriptionPlaceholder: 'Describe your service in detail...',
+        price: 'Price',
+        pricePlaceholder: '0.00',
+        uploadImage: 'Upload Image',
+        changeImage: 'Change Image',
+        // Validation
+        required: 'This field is required',
+        invalidPrice: 'Please enter a valid price',
+        // Success/Error
+        publishSuccess: 'Service published successfully!',
+        publishError: 'Failed to publish service. Please try again.',
+    },
+    myServices: {
+        title: 'My Services',
+        empty: 'You have not created any services yet',
+        createFirst: 'Create your first service',
+        edit: 'Edit',
+        delete: 'Delete',
+        confirmDelete: 'Are you sure you want to delete this service?',
+    },
     profile: {
         title: 'Profile',
         editProfile: 'Edit Profile',
@@ -46,6 +75,10 @@ export const en = {
         helpCenter: 'Help Center',
         inviteFriends: 'Invite Friends',
         logout: 'Logout',
+        // Worker Section
+        workerSection: 'Worker Services',
+        myServices: 'My Services',
+        createService: 'Create Service',
     },
     language: {
         title: 'Language',

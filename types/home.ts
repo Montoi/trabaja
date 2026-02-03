@@ -4,6 +4,7 @@ export interface User {
     name: string;
     avatar: string;
     greeting: string;
+    role?: 'user' | 'worker';
 }
 
 export interface SpecialOffer {
@@ -33,7 +34,7 @@ export interface PopularService {
     reviewCount: number;
     image: string;
     isBookmarked: boolean;
-    isPopular: boolean;
-    createdAt: Date;
-    updatedAt: Date;
+    isPopular?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
