@@ -354,7 +354,7 @@ export default function ChatScreen() {
             />
 
             {/* Input Area */}
-            <View style={[styles.inputContainer, { paddingBottom: insets.bottom || 10 }]}>
+            <View style={[styles.inputContainer, { paddingBottom: isKeyboardVisible ? 0 : (insets.bottom || 10) }]}>
                 <Pressable style={styles.attachButton} onPress={pickImage}>
                     <Ionicons name="add-circle" size={28} color={Theme.colors.textSecondary} />
                 </Pressable>

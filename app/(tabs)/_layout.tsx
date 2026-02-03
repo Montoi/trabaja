@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, Platform, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Platform, Dimensions, AppState } from 'react-native';
 import { memo } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -118,7 +118,22 @@ function CustomTabBar({ currentPage, onTabPress, tabs }: CustomTabBarProps) {
 
     // Standardize floating position to be 100% stable
     // We use the safe area bottom inset plus a fixed gap
-    const bottomPosition = (insets.bottom || 12) + 12;
+    const [bottomPosition, setBottomPosition] = useState((insets.bottom || 12) + 12);
+
+    // Update bottom position whenever insets change
+    useEffect(() => {
+        setBottomPosition((insets.bottom || 12) + 12);
+    }, [insets.bottom]);
+
+    // Force update when app comes to foreground
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (nextAppState) => {
+            if (nextAppState === 'active') {
+                setBottomPosition((insets.bottom || 12) + 12);
+            }
+        });
+        return () => subscription.remove();
+    }, [insets.bottom]);
 
     // Animation logic
     const totalWidth = Dimensions.get('window').width - 60; // 60 = marginHorizontal 30 * 2

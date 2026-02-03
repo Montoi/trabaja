@@ -2,7 +2,9 @@ import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LanguageProvider } from '../contexts/LanguageContext';
 import { useState, useEffect } from 'react';
+import { Platform } from 'react-native';
 import * as Font from 'expo-font';
+import * as SystemUI from 'expo-system-ui';
 import {
     Inter_400Regular,
     Inter_600SemiBold,
@@ -22,6 +24,11 @@ export default function RootLayout() {
     useEffect(() => {
         const prepare = async () => {
             try {
+                // Configure SystemUI for edge-to-edge on Android
+                if (Platform.OS === 'android') {
+                    await SystemUI.setBackgroundColorAsync('transparent');
+                }
+
                 // Actual Resource Loading: App waits for fonts AND icons to be ready
                 await Font.loadAsync({
                     Inter_400Regular,
