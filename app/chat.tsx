@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Platform, Modal, ScrollView, ActivityIndicator, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Platform, Modal, ScrollView, ActivityIndicator, TouchableOpacity, useWindowDimensions, AppState, Keyboard } from 'react-native';
 import Animated, { FadeInUp, FadeOut } from 'react-native-reanimated';
 import ImageViewerModal from '../components/ImageViewerModal';
 import { FlashList, type FlashListProps } from '@shopify/flash-list';
@@ -58,6 +58,54 @@ export default function ChatScreen() {
         providerImage?: string;
     }>();
 
+    // Key to force re-render of KeyboardAvoidingView on AppState change (fix for Android stickiness)
+    const [kavKey, setKavKey] = useState(0);
+    const appState = useRef(AppState.currentState);
+
+    // Dynamic Keyboard Handling (Android)
+    const { height: windowHeight } = useWindowDimensions();
+    const [initialWindowHeight, setInitialWindowHeight] = useState(windowHeight);
+
+    useEffect(() => {
+        // Capture stable max height (when keyboard closed) to detect resize failure
+        if (windowHeight > initialWindowHeight) {
+            setInitialWindowHeight(windowHeight);
+        }
+    }, [windowHeight]);
+
+    // If window shrinks significantly (>100px), native resize is working.
+    // If not, we fall back to 'padding'.
+    const isNativeResizeWorking = (initialWindowHeight - windowHeight) > 100;
+
+    // Track Keyboard Visibility to prevent "Gap" when closed
+    const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+    useEffect(() => {
+        const showListener = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', () => setIsKeyboardVisible(true));
+        const hideListener = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => setIsKeyboardVisible(false));
+        return () => {
+            showListener.remove();
+            hideListener.remove();
+        };
+    }, []);
+
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', nextAppState => {
+            if (
+                appState.current.match(/inactive|background/) &&
+                nextAppState === 'active'
+            ) {
+                // App came to foreground - remount KAV to reset native listeners
+                setKavKey(prev => prev + 1);
+            }
+            appState.current = nextAppState;
+        });
+
+        return () => {
+            subscription.remove();
+        };
+    }, []);
+
     const [messages, setMessages] = useState<Message[]>(MOCK_MESSAGES);
     const [inputText, setInputText] = useState('');
     const [isSending, setIsSending] = useState(false);
@@ -104,16 +152,13 @@ export default function ChatScreen() {
     };
 
     const handleSend = async (imageUris?: string[]) => {
-        if (!inputText.trim() && (!imageUris || imageUris.length === 0)) return;
+        const textToSend = inputText.trim();
+        if (!textToSend && (!imageUris || imageUris.length === 0)) return;
 
-        setIsSending(true);
-
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
+        // 1. Optimistic Update: Create message and update UI immediately
         const newMessage: Message = {
             id: Date.now().toString(),
-            text: inputText.trim(),
+            text: textToSend,
             senderId: 'user',
             senderName: 'You',
             timestamp: new Date(),
@@ -121,9 +166,19 @@ export default function ChatScreen() {
             imageUris,
         };
 
-        setMessages([...messages, newMessage]);
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
         setInputText('');
-        setIsSending(false);
+
+        // 2. Handle "Sending" state (Simulate network only for images or deep backend logic)
+        if (imageUris && imageUris.length > 0) {
+            setIsSending(true);
+            // Simulate upload time for images
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            setIsSending(false);
+        } else {
+            // Text is instant, no delay needed locally.
+            // In a real app, you might trigger the API call here in background.
+        }
     };
 
     const pickImage = async () => {
@@ -263,9 +318,11 @@ export default function ChatScreen() {
 
     return (
         <KeyboardAvoidingView
+            key={kavKey}
             style={styles.container}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+            enabled={Platform.OS === 'ios' ? true : (!isNativeResizeWorking && isKeyboardVisible)}
+            keyboardVerticalOffset={0}
         >
             <StatusBar style="dark" />
 
@@ -297,7 +354,7 @@ export default function ChatScreen() {
             />
 
             {/* Input Area */}
-            <View style={[styles.inputContainer, { paddingBottom: insets.bottom || 16 }]}>
+            <View style={[styles.inputContainer, { paddingBottom: insets.bottom || 10 }]}>
                 <Pressable style={styles.attachButton} onPress={pickImage}>
                     <Ionicons name="add-circle" size={28} color={Theme.colors.textSecondary} />
                 </Pressable>
@@ -317,7 +374,7 @@ export default function ChatScreen() {
                     onPress={() => handleSend()}
                     disabled={!inputText.trim() || isSending}
                 >
-                    {isSending ? (
+                    {isSending && previewImageUris.length > 0 ? (
                         <ActivityIndicator size="small" color={Theme.colors.white} />
                     ) : (
                         <Ionicons
