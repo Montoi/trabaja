@@ -11,7 +11,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useState, useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { SectionHeader, SearchBar } from '../../components/common';
+import { SectionHeader, SearchBar, ErrorState } from '../../components/common';
 import {
     ProfileHeader,
     SpecialOfferBanner,
@@ -198,7 +198,11 @@ export default function HomeScreen() {
                         </View>
                     ) : servicesError ? (
                         <View style={styles.errorContainer}>
-                            <Text style={styles.errorText}>{servicesError}</Text>
+                            <ErrorState
+                                title={servicesError.toLowerCase().includes('network') ? "Network Error" : "Oops!"}
+                                message={servicesError.toLowerCase().includes('network') ? "We couldn't connect to the server. Please check your internet connection." : servicesError}
+                                icon={servicesError.toLowerCase().includes('network') ? "cloud-offline-outline" : "alert-circle-outline"}
+                            />
                         </View>
                     ) : (
                         <View style={styles.popularList}>
