@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Platform, Modal, ScrollView, ActivityIndicator, TouchableOpacity, useWindowDimensions } from 'react-native';
 import Animated, { FadeInUp, FadeOut } from 'react-native-reanimated';
+import ImageViewing from 'react-native-image-viewing';
 import { FlashList, type FlashListProps } from '@shopify/flash-list';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -62,7 +63,8 @@ export default function ChatScreen() {
     const [isSending, setIsSending] = useState(false);
     const [selectedMessageIds, setSelectedMessageIds] = useState<Set<string>>(new Set());
     const [previewImageUris, setPreviewImageUris] = useState<string[]>([]);
-    const [viewerImages, setViewerImages] = useState<string[]>([]);
+    const [isViewerVisible, setIsViewerVisible] = useState(false);
+    const [viewerImages, setViewerImages] = useState<{ uri: string }[]>([]);
     const [viewerIndex, setViewerIndex] = useState(0);
     const listRef = useRef<React.ElementRef<typeof FlashList<Message>>>(null);
 
@@ -153,8 +155,10 @@ export default function ChatScreen() {
     };
 
     const openImage = (images: string[], startIndex: number = 0) => {
-        setViewerImages(images);
+        const formattedImages = images.map(uri => ({ uri }));
+        setViewerImages(formattedImages);
         setViewerIndex(startIndex);
+        setIsViewerVisible(true);
     };
 
 
@@ -384,47 +388,15 @@ export default function ChatScreen() {
                 </View>
             </Modal>
 
-            {/* Fullscreen Image Viewer Modal */}
-            <Modal
-                visible={viewerImages.length > 0}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setViewerImages([])}
-            >
-                <View style={styles.viewerContainer}>
-                    <Pressable
-                        style={styles.viewerCloseButton}
-                        onPress={() => setViewerImages([])}
-                    >
-                        <Ionicons name="close" size={28} color={Theme.colors.white} />
-                    </Pressable>
-
-                    <ScrollView
-                        horizontal
-                        pagingEnabled
-                        showsHorizontalScrollIndicator={false}
-                        contentOffset={{ x: viewerIndex * 300, y: 0 }}
-                    >
-                        {viewerImages.map((uri, index) => (
-                            <View key={index} style={styles.viewerImageContainer}>
-                                <Image
-                                    source={{ uri }}
-                                    style={styles.viewerImage}
-                                    contentFit="contain"
-                                />
-                            </View>
-                        ))}
-                    </ScrollView>
-
-                    {viewerImages.length > 1 && (
-                        <View style={styles.viewerCounter}>
-                            <Text style={styles.viewerCounterText}>
-                                {viewerIndex + 1} / {viewerImages.length}
-                            </Text>
-                        </View>
-                    )}
-                </View>
-            </Modal>
+            {/* Fullscreen Image Viewer with Zoom */}
+            <ImageViewing
+                images={viewerImages}
+                imageIndex={viewerIndex}
+                visible={isViewerVisible}
+                onRequestClose={() => setIsViewerVisible(false)}
+                swipeToCloseEnabled={true}
+                doubleTapToZoomEnabled={true}
+            />
         </KeyboardAvoidingView>
     );
 }
@@ -725,39 +697,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    viewerCloseButton: {
-        position: 'absolute',
-        top: 50,
-        right: 20,
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 10,
-    },
-    viewerImageContainer: {
-        width: 300,
-        height: 500,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    viewerImage: {
-        width: '100%',
-        height: '100%',
-    },
-    viewerCounter: {
-        position: 'absolute',
-        bottom: 50,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
-    },
-    viewerCounterText: {
-        color: Theme.colors.white,
-        fontSize: 14,
-        fontWeight: '600',
-    },
+
 });
