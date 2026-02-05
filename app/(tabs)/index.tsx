@@ -6,9 +6,10 @@ import {
     Text,
     ActivityIndicator,
     Pressable,
+    AppState,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { SectionHeader, SearchBar, ErrorState } from '../../components/common';
@@ -39,6 +40,26 @@ export default function HomeScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const insets = useSafeAreaInsets();
     const { t } = useLanguage();
+
+    // State for dynamic bottom padding
+    const [bottomPadding, setBottomPadding] = useState(120 + insets.bottom);
+    const appState = useRef(AppState.currentState);
+
+    // Update bottom padding when insets change
+    useEffect(() => {
+        setBottomPadding(120 + insets.bottom);
+    }, [insets.bottom]);
+
+    // Force update when app comes to foreground
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (nextAppState) => {
+            if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+                setBottomPadding(120 + insets.bottom);
+            }
+            appState.current = nextAppState;
+        });
+        return () => subscription.remove();
+    }, [insets.bottom]);
 
     // Fetch popular services from API
     const { data: popularServices, loading: servicesLoading, error: servicesError, refetch } = usePopularServices();
@@ -112,7 +133,7 @@ export default function HomeScreen() {
                 style={styles.scrollView}
                 contentContainerStyle={[
                     styles.scrollContent,
-                    { paddingTop: 20, paddingBottom: 120 }
+                    { paddingTop: 20, paddingBottom: bottomPadding }
                 ]}
             >
                 {/* Profile Header */}
