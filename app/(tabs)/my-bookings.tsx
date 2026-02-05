@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     ScrollView,
     Pressable,
+    AppState,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
@@ -141,6 +142,26 @@ export default function MyBookingsScreen() {
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const { t } = useLanguage();
 
+    // State for dynamic bottom padding
+    const [bottomPadding, setBottomPadding] = useState(100 + insets.bottom);
+    const appState = useRef(AppState.currentState);
+
+    // Update bottom padding when insets change
+    useEffect(() => {
+        setBottomPadding(100 + insets.bottom);
+    }, [insets.bottom]);
+
+    // Force update when app comes to foreground
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (nextAppState) => {
+            if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+                setBottomPadding(100 + insets.bottom);
+            }
+            appState.current = nextAppState;
+        });
+        return () => subscription.remove();
+    }, [insets.bottom]);
+
     const handleToggleExpand = useCallback((id: string) => {
         setExpandedId(prev => prev === id ? null : id);
     }, []);
@@ -276,7 +297,7 @@ export default function MyBookingsScreen() {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={[
                     styles.scrollContent,
-                    { paddingBottom: insets.bottom + 100 }
+                    { paddingBottom: bottomPadding }
                 ]}
             >
                 {filteredBookings.length > 0 ? (

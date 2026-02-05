@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions, AppState } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SpecialOfferBanner } from '../components/home/SpecialOfferBanner';
 import type { SpecialOffer } from '../types/home';
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 
 const SPECIAL_OFFERS: SpecialOffer[] = [
     {
@@ -52,6 +52,26 @@ const BANNER_WIDTH = SCREEN_WIDTH - 48;
 export default function SpecialOffersScreen() {
     const insets = useSafeAreaInsets();
 
+    // State for dynamic bottom padding
+    const [bottomPadding, setBottomPadding] = useState(40 + insets.bottom);
+    const appState = useRef(AppState.currentState);
+
+    // Update bottom padding when insets change
+    useEffect(() => {
+        setBottomPadding(40 + insets.bottom);
+    }, [insets.bottom]);
+
+    // Force update when app comes to foreground
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (nextAppState) => {
+            if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+                setBottomPadding(40 + insets.bottom);
+            }
+            appState.current = nextAppState;
+        });
+        return () => subscription.remove();
+    }, [insets.bottom]);
+
     const renderItem = useCallback(({ item }: { item: SpecialOffer }) => (
         <View style={styles.bannerWrapper}>
             <SpecialOfferBanner
@@ -84,7 +104,7 @@ export default function SpecialOffersScreen() {
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
                 style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
+                contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
                 showsVerticalScrollIndicator={false}
             />
         </View>

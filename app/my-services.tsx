@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Pressable, Image, AppState } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -39,6 +39,26 @@ export default function MyServicesScreen() {
     const insets = useSafeAreaInsets();
     const { t } = useLanguage();
     const services = MOCK_WORKER_SERVICES;
+
+    // State for dynamic bottom padding
+    const [bottomPadding, setBottomPadding] = useState(100 + insets.bottom);
+    const appState = useRef(AppState.currentState);
+
+    // Update bottom padding when insets change
+    useEffect(() => {
+        setBottomPadding(100 + insets.bottom);
+    }, [insets.bottom]);
+
+    // Force update when app comes to foreground
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (nextAppState) => {
+            if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+                setBottomPadding(100 + insets.bottom);
+            }
+            appState.current = nextAppState;
+        });
+        return () => subscription.remove();
+    }, [insets.bottom]);
 
     const handleEdit = (id: string) => {
         console.log('Edit service:', id);
@@ -125,8 +145,7 @@ export default function MyServicesScreen() {
                 data={services}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
-                estimatedItemSize={120}
-                contentContainerStyle={styles.listContent}
+                contentContainerStyle={[styles.listContent, { paddingBottom: bottomPadding }]}
                 showsVerticalScrollIndicator={false}
                 ListEmptyComponent={renderEmpty}
             />

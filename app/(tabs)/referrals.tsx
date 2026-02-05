@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, AppState } from 'react-native';
+import { useState, useRef, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
@@ -7,6 +8,26 @@ import Svg, { Circle, Path, Defs, LinearGradient, Stop } from 'react-native-svg'
 export default function ReferralsScreen() {
     const insets = useSafeAreaInsets();
     const PRIMARY_COLOR = '#FF4B63';
+
+    // State for dynamic bottom padding
+    const [bottomPadding, setBottomPadding] = useState(100 + insets.bottom);
+    const appState = useRef(AppState.currentState);
+
+    // Update bottom padding when insets change
+    useEffect(() => {
+        setBottomPadding(100 + insets.bottom);
+    }, [insets.bottom]);
+
+    // Force update when app comes to foreground
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (nextAppState) => {
+            if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+                setBottomPadding(100 + insets.bottom);
+            }
+            appState.current = nextAppState;
+        });
+        return () => subscription.remove();
+    }, [insets.bottom]);
 
     // Gauge configuration: 90% arc, gap at bottom
     // Circumference = 2 * PI * 120 = 240 * PI
@@ -27,7 +48,7 @@ export default function ReferralsScreen() {
             <StatusBar style="dark" />
             <ScrollView
                 style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
+                contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
                 showsVerticalScrollIndicator={false}
             >
                 {/* Header */}

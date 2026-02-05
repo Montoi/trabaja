@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Switch } from 'react-native';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable, Switch, AppState } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -73,6 +73,26 @@ export default function ProfileScreen() {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const { language, t } = useLanguage();
 
+    // State for dynamic bottom padding
+    const [bottomPadding, setBottomPadding] = useState(120 + insets.bottom);
+    const appState = useRef(AppState.currentState);
+
+    // Update bottom padding when insets change
+    useEffect(() => {
+        setBottomPadding(120 + insets.bottom);
+    }, [insets.bottom]);
+
+    // Force update when app comes to foreground
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (nextAppState) => {
+            if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+                setBottomPadding(120 + insets.bottom);
+            }
+            appState.current = nextAppState;
+        });
+        return () => subscription.remove();
+    }, [insets.bottom]);
+
     const languageLabel = language === 'en' ? 'English (US)' : 'Español';
 
     const handleEditProfile = useCallback(() => router.push('/edit-profile'), []);
@@ -97,7 +117,7 @@ export default function ProfileScreen() {
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }]}
+                contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
             >
                 {/* Profile Section */}
                 <View style={styles.profileSection}>

@@ -2,7 +2,8 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { AppState } from 'react-native';
 import { Theme } from '../../constants/Theme';
 import { MOCK_REVIEWS, MOCK_PHOTOS } from '../../constants/MockData';
 
@@ -16,6 +17,25 @@ import { BottomActionTab } from '../../components/service-detail/BottomActionTab
 
 export default function ServiceDetailScreen() {
     const insets = useSafeAreaInsets();
+    // Dynamic inset state for BottomActionTab
+    const [bottomInset, setBottomInset] = useState(insets.bottom);
+    const appState = useRef(AppState.currentState);
+
+    // Update bottom inset when insets change
+    useEffect(() => {
+        setBottomInset(insets.bottom);
+    }, [insets.bottom]);
+
+    // Force update when app comes to foreground
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (nextAppState) => {
+            if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+                setBottomInset(insets.bottom);
+            }
+            appState.current = nextAppState;
+        });
+        return () => subscription.remove();
+    }, [insets.bottom]);
     const {
         id,
         title = 'House Cleaning',
@@ -89,7 +109,7 @@ export default function ServiceDetailScreen() {
             <BottomActionTab
                 onMessage={handleMessage}
                 onBook={handleBook}
-                bottomInset={insets.bottom}
+                bottomInset={bottomInset}
             />
         </View>
     );

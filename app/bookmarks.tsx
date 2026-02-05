@@ -1,10 +1,10 @@
-import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator, AppState } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { PopularServiceCard } from '../components/home/PopularServiceCard';
 import { CategoryFilter } from '../components/common';
 import type { PopularService } from '../types/home';
@@ -16,6 +16,26 @@ const CATEGORIES = ['All', 'Cleaning', 'Repairing', 'Painting', 'Laundry', 'Appl
 export default function BookmarksScreen() {
     const insets = useSafeAreaInsets();
     const [selectedCategory, setSelectedCategory] = useState('All');
+
+    // State for dynamic bottom padding
+    const [bottomPadding, setBottomPadding] = useState(40 + insets.bottom);
+    const appState = useRef(AppState.currentState);
+
+    // Update bottom padding when insets change
+    useEffect(() => {
+        setBottomPadding(40 + insets.bottom);
+    }, [insets.bottom]);
+
+    // Force update when app comes to foreground
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (nextAppState) => {
+            if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+                setBottomPadding(40 + insets.bottom);
+            }
+            appState.current = nextAppState;
+        });
+        return () => subscription.remove();
+    }, [insets.bottom]);
 
     // Fetch bookmarked services from API
     const { data: bookmarks, loading, error, refetch } = useBookmarkedServices();
@@ -99,7 +119,7 @@ export default function BookmarksScreen() {
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id}
                     style={styles.scrollView}
-                    contentContainerStyle={styles.scrollContent}
+                    contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
                     showsVerticalScrollIndicator={false}
                     ListEmptyComponent={() => (
                         <View style={styles.emptyContainer}>
